@@ -2,7 +2,7 @@ use std::io;
 use std::io::prelude::*;
 use std::fs::File;
 
-fn main() -> io::Result<()> {
+pub fn main() -> io::Result<i32> {
     let input_file = try!(File::open("src/input"));
     let file = io::BufReader::new(&input_file);
     let mut total = 0;
@@ -20,7 +20,5 @@ fn main() -> io::Result<()> {
         }
     }
 
-    println!("total: {}", total);
-
-    Ok(())
+    Ok(total)
 }
