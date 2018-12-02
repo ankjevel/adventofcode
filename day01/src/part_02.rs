@@ -2,6 +2,9 @@ use std::io;
 use std::io::prelude::*;
 use std::fs::File;
 use std::collections::HashSet;
+use std::iter::FromIterator;
+
+use regex::Regex;
 
 type Change = (char, i32);
 
@@ -10,9 +13,15 @@ fn get_freqencies () -> io::Result<Vec<Change>> {
     let file = io::BufReader::new(&input_file);
 
     let mut freq: Vec<Change> = vec![];
+    let re = Regex::new(r"[+-]\d").unwrap();
 
     for line in file.lines() {
         let chars: Vec<char> = line.unwrap().chars().collect();
+
+        if !re.is_match(&String::from_iter(chars.iter())) {
+            continue
+        }
+
         let n_str: String = chars[1..chars.len()].iter().collect();
         let n: i32 = n_str.parse::<i32>().unwrap();
 

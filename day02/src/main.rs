@@ -1,6 +1,10 @@
+extern crate regex;
+
 use std::io;
 use std::io::prelude::*;
 use std::fs::File;
+
+use regex::Regex;
 
 mod part_01;
 mod part_02;
@@ -10,8 +14,15 @@ pub fn input () -> io::Result<Vec<Vec<char>>> {
     let file = io::BufReader::new(&input_file);
 
     let mut rows = vec![];
+    let re = Regex::new(r"^\w*?$").unwrap();
+
     for line in file.lines() {
         let r = line.unwrap();
+
+        if !re.is_match(&r) {
+            continue
+        }
+
         let chars: Vec<char> = r.chars().collect();
 
         rows.push(chars);
