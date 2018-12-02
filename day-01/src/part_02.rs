@@ -6,7 +6,7 @@ use std::collections::HashSet;
 type Change = (char, i32);
 
 fn get_freqencies () -> io::Result<Vec<Change>> {
-    let input_file = try!(File::open("src/input"));
+    let input_file = try!(File::open("../input/day_01"));
     let file = io::BufReader::new(&input_file);
 
     let mut freq: Vec<Change> = vec![];

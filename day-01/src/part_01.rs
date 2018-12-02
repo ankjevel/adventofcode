@@ -3,7 +3,7 @@ use std::io::prelude::*;
 use std::fs::File;
 
 pub fn main() -> io::Result<i32> {
-    let input_file = try!(File::open("src/input"));
+    let input_file = try!(File::open("../input/day_01"));
     let file = io::BufReader::new(&input_file);
     let mut total = 0;
 
