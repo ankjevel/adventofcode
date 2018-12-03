@@ -1,14 +1,14 @@
+use std::collections::HashSet;
+use std::fs::File;
 use std::io;
 use std::io::prelude::*;
-use std::fs::File;
-use std::collections::HashSet;
 use std::iter::FromIterator;
 
 use regex::Regex;
 
 type Change = (char, i32);
 
-fn get_freqencies () -> io::Result<Vec<Change>> {
+fn get_freqencies() -> io::Result<Vec<Change>> {
     let input_file = try!(File::open("../input/day_01"));
     let file = io::BufReader::new(&input_file);
 
@@ -19,7 +19,7 @@ fn get_freqencies () -> io::Result<Vec<Change>> {
         let chars: Vec<char> = line.unwrap().chars().collect();
 
         if !re.is_match(&String::from_iter(chars.iter())) {
-            continue
+            continue;
         }
 
         let n_str: String = chars[1..chars.len()].iter().collect();
@@ -44,16 +44,16 @@ pub fn main() -> io::Result<i32> {
             match modulus.to_string().as_str() {
                 "+" => frequency += n,
                 "-" => frequency -= n,
-                _ => break 'outer_loop
+                _ => break 'outer_loop,
             }
 
             if !used_frequencies.contains(&frequency) {
                 used_frequencies.insert(frequency.clone());
-                continue
+                continue;
             }
 
             reaced_twice = frequency;
-            break 'outer_loop
+            break 'outer_loop;
         }
     }
 

@@ -1,6 +1,6 @@
+use std::fs::File;
 use std::io;
 use std::io::prelude::*;
-use std::fs::File;
 use std::iter::FromIterator;
 
 use regex::Regex;
@@ -16,7 +16,7 @@ pub fn main() -> io::Result<i32> {
         let chars: Vec<char> = line.unwrap().chars().collect();
 
         if !re.is_match(&String::from_iter(chars.iter())) {
-            continue
+            continue;
         }
 
         let n_str: String = chars[1..chars.len()].iter().collect();

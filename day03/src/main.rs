@@ -1,19 +1,18 @@
 extern crate regex;
 
 mod claim;
-#[allow(dead_code)]
-mod print_grid;
 mod part_01;
 mod part_02;
+#[allow(dead_code)]
+mod print_grid;
 
+use std::fs::File;
 use std::io;
 use std::io::prelude::*;
 use std::io::BufReader;
-use std::fs::File;
 
-use regex::Regex;
 use claim::Claim;
-
+use regex::Regex;
 
 fn main() -> io::Result<()> {
     let claims = input().unwrap();
@@ -31,7 +30,7 @@ fn main() -> io::Result<()> {
     Ok(())
 }
 
-fn to_claims (string: String) -> io::Result<Vec<Claim>> {
+fn to_claims(string: String) -> io::Result<Vec<Claim>> {
     let re = Regex::new(r"^#(\d*) @ (\d*),(\d*): (\d*)x(\d*)$").unwrap();
 
     let claims = string
@@ -44,7 +43,7 @@ fn to_claims (string: String) -> io::Result<Vec<Claim>> {
     Ok(claims)
 }
 
-pub fn input () -> io::Result<Vec<Claim>> {
+pub fn input() -> io::Result<Vec<Claim>> {
     let input_file = try!(File::open("../input/day_03"));
     let mut file = BufReader::new(&input_file);
     let mut contents = String::new();
@@ -66,7 +65,7 @@ mod tests {
         #3 @ 5,5: 2x2
     ";
 
-    fn get_claims () -> io::Result<Vec<Claim>> {
+    fn get_claims() -> io::Result<Vec<Claim>> {
         let claims = to_claims(EXAMPLE_DATA.to_string()).unwrap();
 
         Ok(claims)

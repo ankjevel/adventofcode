@@ -3,7 +3,7 @@ use std::iter::FromIterator;
 
 type Diff = (Vec<char>, i32);
 
-fn compare_chars (a: Vec<char>, b: Vec<char>) -> Diff {
+fn compare_chars(a: Vec<char>, b: Vec<char>) -> Diff {
     let mut chars = vec![];
     let mut differ = 0;
 

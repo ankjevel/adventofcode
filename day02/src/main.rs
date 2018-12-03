@@ -1,15 +1,15 @@
 extern crate regex;
 
+use std::fs::File;
 use std::io;
 use std::io::prelude::*;
-use std::fs::File;
 
 use regex::Regex;
 
 mod part_01;
 mod part_02;
 
-pub fn input () -> io::Result<Vec<Vec<char>>> {
+pub fn input() -> io::Result<Vec<Vec<char>>> {
     let input_file = try!(File::open("../input/day_02"));
     let file = io::BufReader::new(&input_file);
 
@@ -20,7 +20,7 @@ pub fn input () -> io::Result<Vec<Vec<char>>> {
         let r = line.unwrap();
 
         if !re.is_match(&r) {
-            continue
+            continue;
         }
 
         let chars: Vec<char> = r.chars().collect();
@@ -32,8 +32,14 @@ pub fn input () -> io::Result<Vec<Vec<char>>> {
 }
 
 fn main() -> io::Result<()> {
-    println!("part 1; checksum: {}", part_01::main(input().unwrap()).unwrap());
-    println!("part 2; common letters: {}", part_02::main(input().unwrap()).unwrap());
+    println!(
+        "part 1; checksum: {}",
+        part_01::main(input().unwrap()).unwrap()
+    );
+    println!(
+        "part 2; common letters: {}",
+        part_02::main(input().unwrap()).unwrap()
+    );
 
     Ok(())
 }

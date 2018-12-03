@@ -13,7 +13,7 @@ impl Grid {
         Grid {
             width: 0,
             height: 0,
-            rows: vec![]
+            rows: vec![],
         }
     }
 
@@ -30,7 +30,11 @@ impl Grid {
         }
 
         for _ in (self.rows.len() as i32)..self.height {
-            self.rows.push(iter::repeat('.'.to_string()).take(self.width as usize).collect());
+            self.rows.push(
+                iter::repeat('.'.to_string())
+                    .take(self.width as usize)
+                    .collect(),
+            );
         }
 
         for _ in (self.rows[0].len() as i32)..self.width {

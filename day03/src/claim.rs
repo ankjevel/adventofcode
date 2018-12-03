@@ -1,13 +1,13 @@
-use std::str::FromStr;
 use regex::Regex;
+use std::str::FromStr;
 
-fn to_i32 (string: &str) -> i32 {
+fn to_i32(string: &str) -> i32 {
     i32::from_str(&string).unwrap_or(0)
 }
 
 pub struct Claim {
     pub id: i32,
-    pub rectangle: Rectangle
+    pub rectangle: Rectangle,
 }
 
 impl Claim {
@@ -22,46 +22,44 @@ impl Claim {
                 to_i32(&cap[2]),
                 to_i32(&cap[3]),
                 to_i32(&cap[4]),
-                to_i32(&cap[5])
-            )
+                to_i32(&cap[5]),
+            ),
         }
     }
 
     pub fn contains(&self, x: i32, y: i32) -> bool {
         let rect = &self.rectangle;
 
-        x >= rect.top_left.x &&
-        x <= (rect.bottom_right.x - 1) &&
-        y >= rect.top_left.y &&
-        y <= (rect.bottom_right.y - 1)
+        x >= rect.top_left.x
+            && x < rect.bottom_right.x
+            && y >= rect.top_left.y
+            && y < rect.bottom_right.y
     }
 
     pub fn overlaps(&self, other: &Claim) -> bool {
         let a = &self.rectangle;
         let b = &other.rectangle;
 
-        a.top_left.x <= (b.bottom_right.x - 1) &&
-        (a.bottom_right.x - 1) >= b.top_left.x &&
-        a.top_left.y <= (b.bottom_right.y - 1) &&
-        (a.bottom_right.y - 1) >= b.top_left.y
+        a.top_left.x < b.bottom_right.x
+            && a.bottom_right.x > b.top_left.x
+            && a.top_left.y < b.bottom_right.y
+            && a.bottom_right.y > b.top_left.y
     }
-
 
     pub fn width(&self) -> i32 {
         &self.rectangle.width + &self.rectangle.top_left.x
     }
 
     pub fn height(&self) -> i32 {
-       &self.rectangle.height + &self.rectangle.top_left.y
+        &self.rectangle.height + &self.rectangle.top_left.y
     }
-
 }
 
 pub struct Rectangle {
     pub top_left: Point,
     pub bottom_right: Point,
     pub width: i32,
-    pub height: i32
+    pub height: i32,
 }
 
 impl Rectangle {
@@ -70,14 +68,14 @@ impl Rectangle {
             top_left: Point::new(x, y),
             bottom_right: Point::new(x + width, y + height),
             width,
-            height
+            height,
         }
     }
 }
 
 pub struct Point {
     pub x: i32,
-    pub y: i32
+    pub y: i32,
 }
 
 impl Point {

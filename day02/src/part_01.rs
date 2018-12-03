@@ -1,12 +1,14 @@
+use std::collections::{HashMap, HashSet};
 use std::io;
-use std::collections::HashMap;
-use std::collections::HashSet;
 
 fn count(chars: Vec<char>) -> HashSet<i32> {
     let mut matches = HashMap::new();
 
     for character in chars.iter() {
-        matches.entry(character).and_modify(|mat| *mat += 1).or_insert(1);
+        matches
+            .entry(character)
+            .and_modify(|mat| *mat += 1)
+            .or_insert(1);
     }
 
     let mut repeated_chars = HashSet::new();

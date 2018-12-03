@@ -8,17 +8,17 @@ pub fn main(claims: &Vec<Claim>) -> io::Result<i32> {
     'main_loop: for a in claims.iter() {
         for b in claims.iter() {
             if a.id == b.id {
-                continue
+                continue;
             }
 
             if a.overlaps(b) {
-                continue 'main_loop
+                continue 'main_loop;
             }
         }
 
         non_overlapping = a.id;
 
-        break 'main_loop
+        break 'main_loop;
     }
 
     Ok(non_overlapping)
