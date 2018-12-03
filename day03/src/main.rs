@@ -1,3 +1,4 @@
+extern crate colored;
 extern crate regex;
 
 mod claim;
@@ -26,6 +27,8 @@ fn main() -> io::Result<()> {
         "What is the ID of the only claim that doesn't overlap? {}",
         part_02::main(&claims).unwrap()
     );
+
+    // println!("{}", print_grid::main(&claims).unwrap());
 
     Ok(())
 }

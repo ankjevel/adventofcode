@@ -1,4 +1,6 @@
-use std::{io, iter};
+use colored::*;
+use std::char::from_u32;
+use std::{cmp, io, iter};
 
 use claim::Claim;
 
@@ -15,6 +17,69 @@ impl Grid {
             height: 0,
             rows: vec![],
         }
+    }
+
+    fn valid_num(character: i32) -> i32 {
+        cmp::min(cmp::max(character, 49), 126)
+    }
+
+    fn colored(num: i32, group: i32) -> String {
+        let string = from_u32(num as u32).unwrap().to_string();
+
+        let colored = match group {
+            2 => string.red().to_string(),
+            3 => string.green().to_string(),
+            4 => string.yellow().to_string(),
+            5 => string.blue().to_string(),
+            6 => string.magenta().to_string(),
+            7 => string.cyan().to_string(),
+            8 => string.white().bold().to_string(),
+            9 => string.red().bold().to_string(),
+            10 => string.green().bold().to_string(),
+            11 => string.yellow().bold().to_string(),
+            12 => string.blue().bold().to_string(),
+            13 => string.magenta().bold().to_string(),
+            14 => string.cyan().bold().to_string(),
+            15 => string.white().italic().to_string(),
+            16 => string.red().italic().to_string(),
+            17 => string.green().italic().to_string(),
+            18 => string.yellow().italic().to_string(),
+            19 => string.blue().italic().to_string(),
+            20 => string.magenta().italic().to_string(),
+            21 => string.cyan().italic().to_string(),
+            22 => string.white().dimmed().to_string(),
+            23 => string.red().dimmed().to_string(),
+            24 => string.green().dimmed().to_string(),
+            25 => string.yellow().dimmed().to_string(),
+            26 => string.blue().dimmed().to_string(),
+            27 => string.magenta().dimmed().to_string(),
+            29 => string.cyan().dimmed().to_string(),
+
+            _ => string,
+        };
+
+        colored.to_string()
+    }
+
+    fn character(character: i32) -> String {
+        let mut num = 48 + character;
+        let rem = num % 126;
+
+        if num != rem {
+            num = Grid::valid_num(rem + 48);
+        }
+
+        if num >= 88 {
+            num = Grid::valid_num(num + 1);
+        }
+
+        if num >= 120 {
+            num = Grid::valid_num(num + 1);
+        }
+
+        let round = ((character as f32) / 126_f32).ceil() as i32;
+
+        Grid::colored(num, round)
     }
 
     fn append(&mut self, claim: &Claim) {
@@ -49,7 +114,7 @@ impl Grid {
                 let yy = y as usize;
 
                 if self.rows[yy][xx] == "." {
-                    self.rows[yy][xx] = claim.id.to_string();
+                    self.rows[yy][xx] = Grid::character(claim.id);
                 } else {
                     self.rows[yy][xx] = 'x'.to_string();
                 }
@@ -85,6 +150,14 @@ impl Grid {
 
 pub fn main(claims: &Vec<Claim>) -> io::Result<String> {
     let mut grid = Grid::new();
+
+    Grid::character(126);
+    Grid::character(147);
+    Grid::character(148);
+    Grid::character(149);
+    Grid::character(150);
+    Grid::character(2756);
+    Grid::character(1233);
 
     for claim in claims.iter() {
         grid.append(&claim);
