@@ -1,7 +1,7 @@
 use regex::Regex;
 use std::str::FromStr;
 
-#[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Clone, Copy, Eq, Ord, PartialEq, PartialOrd, Debug)]
 pub struct Time {
     pub year: u16,
     pub month: u8,
@@ -10,7 +10,16 @@ pub struct Time {
     pub minute: u8,
 }
 
-#[derive(Clone, Copy)]
+impl Time {
+    pub fn minutes(&self) -> u32 {
+        let hours = self.hour as u32;
+        let minutes = self.minute as u32;
+
+        (hours * 60) + minutes
+    }
+}
+
+#[derive(Clone, Copy, PartialEq)]
 pub enum Action {
     BeginShift(u32),
     Sleep,

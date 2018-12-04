@@ -7,7 +7,11 @@ use record::Record;
 pub fn main(records: &Vec<Record>) -> io::Result<u32> {
     let mut guards = guards(&records).unwrap();
 
-    guards.sort_by_key(|guard| guard.sleep);
+    guards.sort_unstable_by(|a, b| {
+        let a_max = a.minutes_slept.into_iter().max().unwrap();
+        let b_max = b.minutes_slept.into_iter().max().unwrap();
+        a_max.cmp(b_max)
+    });
 
     let selected_guard = guards.last().unwrap();
 

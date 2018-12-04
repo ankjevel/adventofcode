@@ -1,12 +1,20 @@
 extern crate regex;
 
+mod guards;
+mod part_01;
+mod part_02;
 mod record;
 
 use record::Record;
 use std::io;
 
 fn main() -> io::Result<()> {
-    println!("Hello, world!");
+    let input = include_str!("../../input/day_04");
+    let records = parse_input(input);
+
+    println!("part_01: {}", part_01::main(&records).unwrap());
+
+    println!("part_02: {}", part_02::main(&records).unwrap());
 
     Ok(())
 }
@@ -50,24 +58,17 @@ mod tests {
 
     #[test]
     fn id_multiplied_by_minute() {
-        let data = parse_input(&EXAMPLE_DATA);
+        let records = parse_input(&EXAMPLE_DATA);
+        let result = part_01::main(&records).unwrap();
 
-        for line in data {
-            println!(
-                "
-year: {}
-month: {}
-day: {}
-hour: {}
-minute: {}",
-                &line.time.year,
-                &line.time.month,
-                &line.time.day,
-                &line.time.hour,
-                &line.time.minute
-            );
-        }
+        assert_eq!(result, 240)
+    }
 
-        assert_eq!(10 * 24, 240)
+    #[test]
+    fn id_of_most_frequest_multiplied_by_minute() {
+        let records = parse_input(&EXAMPLE_DATA);
+        let result = part_02::main(&records).unwrap();
+
+        assert_eq!(result, 4455)
     }
 }
