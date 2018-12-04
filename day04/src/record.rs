@@ -30,11 +30,21 @@ impl Record {
 
         let dates = date_re.captures(&string).unwrap();
 
-        let year = u16::from_str(&dates[1]).unwrap_or(0);
-        let month = u8::from_str(&dates[2]).unwrap_or(0);
-        let day = u8::from_str(&dates[3]).unwrap_or(0);
-        let hour = u8::from_str(&dates[4]).unwrap_or(0);
-        let minute = u8::from_str(&dates[5]).unwrap_or(0);
+        let year = dates
+            .get(1)
+            .map_or(0, |s| u16::from_str(s.as_str()).unwrap());
+        let month = dates
+            .get(2)
+            .map_or(0, |s| u8::from_str(s.as_str()).unwrap());
+        let day = dates
+            .get(3)
+            .map_or(0, |s| u8::from_str(s.as_str()).unwrap());
+        let hour = dates
+            .get(4)
+            .map_or(0, |s| u8::from_str(s.as_str()).unwrap());
+        let minute = dates
+            .get(5)
+            .map_or(0, |s| u8::from_str(s.as_str()).unwrap());
 
         let time = Time {
             year,
@@ -51,8 +61,11 @@ impl Record {
             } else if string.contains("asleep") {
                 Action::Sleep
             } else {
-                let capture = &id_re.captures(&string).unwrap();
-                let guard_id = u32::from_str(&capture[1]).unwrap();
+                let guard_id = id_re
+                    .captures(&string)
+                    .unwrap()
+                    .get(1)
+                    .map_or(0, |s| u32::from_str(s.as_str()).unwrap());
 
                 Action::BeginShift(guard_id)
             },
