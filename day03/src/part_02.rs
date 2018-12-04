@@ -2,7 +2,7 @@ use std::io;
 
 use claim::Claim;
 
-pub fn main(claims: &Vec<Claim>) -> io::Result<i32> {
+pub fn main(claims: &Vec<Claim>) -> io::Result<u32> {
     let mut non_overlapping = 0;
 
     'main_loop: for a in claims.iter() {

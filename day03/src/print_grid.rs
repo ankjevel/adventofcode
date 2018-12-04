@@ -5,8 +5,8 @@ use std::{cmp, io, iter};
 use claim::Claim;
 
 struct Grid {
-    width: i32,
-    height: i32,
+    width: u32,
+    height: u32,
     rows: Vec<Vec<String>>,
 }
 
@@ -19,11 +19,11 @@ impl Grid {
         }
     }
 
-    fn valid_num(character: i32) -> i32 {
+    fn valid_num(character: u32) -> u32 {
         cmp::min(cmp::max(character, 49), 126)
     }
 
-    fn colored(num: i32, group: i32) -> String {
+    fn colored(num: u32, group: u32) -> String {
         let string = from_u32(num as u32).unwrap().to_string();
 
         let colored = match group {
@@ -61,7 +61,7 @@ impl Grid {
         colored.to_string()
     }
 
-    fn character(character: i32) -> String {
+    fn character(character: u32) -> String {
         let mut num = 48 + character;
         let rem = num % 126;
 
@@ -77,7 +77,7 @@ impl Grid {
             num = Grid::valid_num(num + 1);
         }
 
-        let round = ((character as f32) / 126_f32).ceil() as i32;
+        let round = ((character as f32) / 126_f32).ceil() as u32;
 
         Grid::colored(num, round)
     }
@@ -94,7 +94,7 @@ impl Grid {
             self.height = claim_height;
         }
 
-        for _ in (self.rows.len() as i32)..self.height {
+        for _ in (self.rows.len() as u32)..self.height {
             self.rows.push(
                 iter::repeat('.'.to_string())
                     .take(self.width as usize)
@@ -102,7 +102,7 @@ impl Grid {
             );
         }
 
-        for _ in (self.rows[0].len() as i32)..self.width {
+        for _ in (self.rows[0].len() as u32)..self.width {
             for y in 0..self.height {
                 self.rows[(y as usize)].push('.'.to_string());
             }
@@ -151,17 +151,7 @@ impl Grid {
 pub fn main(claims: &Vec<Claim>) -> io::Result<String> {
     let mut grid = Grid::new();
 
-    Grid::character(126);
-    Grid::character(147);
-    Grid::character(148);
-    Grid::character(149);
-    Grid::character(150);
-    Grid::character(2756);
-    Grid::character(1233);
-
-    for claim in claims.iter() {
-        grid.append(&claim);
-    }
+    claims.iter().for_each(|claim| grid.append(&claim));
 
     Ok(grid.print())
 }

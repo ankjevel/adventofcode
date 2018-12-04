@@ -1,12 +1,12 @@
 use regex::Regex;
 use std::str::FromStr;
 
-fn to_i32(string: &str) -> i32 {
-    i32::from_str(&string).unwrap_or(0)
+fn to_u32(string: &str) -> u32 {
+    u32::from_str(&string).unwrap_or(0)
 }
 
 pub struct Claim {
-    pub id: i32,
+    pub id: u32,
     pub rectangle: Rectangle,
 }
 
@@ -17,17 +17,17 @@ impl Claim {
         let cap = re.captures(&string).unwrap();
 
         Claim {
-            id: to_i32(&cap[1]),
+            id: to_u32(&cap[1]),
             rectangle: Rectangle::new(
-                to_i32(&cap[2]),
-                to_i32(&cap[3]),
-                to_i32(&cap[4]),
-                to_i32(&cap[5]),
+                to_u32(&cap[2]),
+                to_u32(&cap[3]),
+                to_u32(&cap[4]),
+                to_u32(&cap[5]),
             ),
         }
     }
 
-    pub fn contains(&self, x: i32, y: i32) -> bool {
+    pub fn contains(&self, x: u32, y: u32) -> bool {
         let rect = &self.rectangle;
 
         x >= rect.top_left.x
@@ -46,11 +46,11 @@ impl Claim {
             && a.bottom_right.y > b.top_left.y
     }
 
-    pub fn width(&self) -> i32 {
+    pub fn width(&self) -> u32 {
         &self.rectangle.width + &self.rectangle.top_left.x
     }
 
-    pub fn height(&self) -> i32 {
+    pub fn height(&self) -> u32 {
         &self.rectangle.height + &self.rectangle.top_left.y
     }
 }
@@ -58,12 +58,12 @@ impl Claim {
 pub struct Rectangle {
     pub top_left: Point,
     pub bottom_right: Point,
-    pub width: i32,
-    pub height: i32,
+    pub width: u32,
+    pub height: u32,
 }
 
 impl Rectangle {
-    fn new(x: i32, y: i32, width: i32, height: i32) -> Self {
+    fn new(x: u32, y: u32, width: u32, height: u32) -> Self {
         Rectangle {
             top_left: Point::new(x, y),
             bottom_right: Point::new(x + width, y + height),
@@ -74,12 +74,12 @@ impl Rectangle {
 }
 
 pub struct Point {
-    pub x: i32,
-    pub y: i32,
+    pub x: u32,
+    pub y: u32,
 }
 
 impl Point {
-    pub fn new(x: i32, y: i32) -> Point {
+    pub fn new(x: u32, y: u32) -> Point {
         Point { x, y }
     }
 }
