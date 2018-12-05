@@ -7,3 +7,4 @@
 - [Day 2](https://github.com/ankjevel/adventofcode/tree/2018/day02) 🌟 🌟
 - [Day 3](https://github.com/ankjevel/adventofcode/tree/2018/day03) 🌟 🌟
 - [Day 4](https://github.com/ankjevel/adventofcode/tree/2018/day04) 🌟 🌟
+- [Day 5](https://github.com/ankjevel/adventofcode/tree/2018/day05) 🌟 🌟
