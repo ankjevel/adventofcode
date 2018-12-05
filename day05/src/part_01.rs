@@ -1,6 +1,6 @@
 use std::io;
 
-pub fn main(units: &Vec<char>) -> io::Result<u32> {
+pub fn main(units: &Vec<char>) -> io::Result<Vec<char>> {
     let mut remaining: Vec<char> = vec![];
 
     units.iter().for_each(|a| {
@@ -14,5 +14,5 @@ pub fn main(units: &Vec<char>) -> io::Result<u32> {
         remaining.push(*a);
     });
 
-    Ok(remaining.len() as u32)
+    Ok(remaining)
 }
