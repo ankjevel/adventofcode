@@ -79,7 +79,7 @@ pub fn main(points: &Vec<Point>) -> io::Result<u32> {
                     *state = State::Owned(point);
                     count.entry(point).and_modify(|c| *c += 1);
                 }
-                _ => {},
+                _ => {}
             }
         }
 
