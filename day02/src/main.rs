@@ -1,41 +1,44 @@
 #![feature(label_break_value)]
 
-use std::io;
+use std::io::Result;
 
-mod part_01;
+struct Program {
+    input: Vec<u32>,
+    pointer: usize
+}
 
-fn main() -> io::Result<()> {
-    let input = parse_input(include_str!("../../input/day_02"));
-
-    'part_01: {
-        let mut input_for_part_01 = input[0].clone();
-        input_for_part_01[1] = 12;
-        input_for_part_01[2] = 2;
-
-        let output_for_part_01 = part_01::main(&input_for_part_01).unwrap()[0];
-
-        println!("part_01: {}", output_for_part_01);
+impl Program {
+    fn new(input: &Vec<u32>) -> Program {
+        Program { input: input.clone(), pointer: 0 }
     }
 
-    'part_02: {
-        let look_for = 19690720;
-        for noun in 0..=99 {
-            for verb in 0..=99 {
-                let mut input_for_part_02 = input[0].clone();
-                input_for_part_02[1] = noun;
-                input_for_part_02[2] = verb;
+    fn patch(&mut self, index: usize, value: u32) {
+        self.input[index] = value;
+    }
 
-                let output = part_01::main(&input_for_part_02).unwrap()[0];
+    fn run(&mut self) -> u32 {
+        self.pointer = 0;
 
-                if output == look_for {
-                    println!("part_02: {}", (100 * noun + verb));
-                    break;
-                }
+        loop {
+            let opcode = self.input[self.pointer];
+
+            if opcode == 99 {
+                break self.input[self.pointer];
             }
+
+            let noun = self.input[self.input[self.pointer + 1] as usize];
+            let verb = self.input[self.input[self.pointer + 2] as usize];
+            let output_position = self.input[self.pointer + 3] as usize;
+
+            self.input[output_position] = match opcode {
+                1 => noun + verb,
+                2 => noun * verb,
+                _ => panic!("unexpected opcode: {}", opcode),
+            };
+
+            self.pointer += 4;
         }
     }
-
-    Ok(())
 }
 
 fn parse_input(string: &str) -> Vec<Vec<u32>> {
@@ -50,6 +53,36 @@ fn parse_input(string: &str) -> Vec<Vec<u32>> {
                 .collect::<Vec<u32>>()
         })
         .collect()
+}
+
+fn main() -> Result<()> {
+    let input = parse_input(include_str!("../../input/day_02"));
+
+    'part_01: {
+        let mut part_01 = Program::new(&input[0]);
+        part_01.patch(1, 12);
+        part_01.patch(2, 2);
+
+        println!("part_01: {}", part_01.run());
+    }
+
+    'part_02: {
+        let look_for = 19690720;
+        for noun in 0..=99 {
+            for verb in 0..=99 {
+                let mut part_02 = Program::new(&input[0]);
+                part_02.patch(1, noun);
+                part_02.patch(2, verb);
+
+                if part_02.run() == look_for {
+                    println!("part_02: {}", (100 * noun + verb));
+                    break;
+                }
+            }
+        }
+    }
+
+    Ok(())
 }
 
 #[cfg(test)]
@@ -68,7 +101,12 @@ mod tests {
 
         let results = input
             .iter()
-            .map(|row| part_01::main(&row).unwrap())
+            .map(|row| {
+                let mut program = Program::new(&row);
+                program.run();
+
+                program.input
+            })
             .collect::<Vec<Vec<u32>>>();
 
         assert_eq!(results[0], [2, 0, 0, 0, 99]);
