@@ -1,3 +1,5 @@
+#![feature(label_break_value)]
+
 use std::io;
 
 mod part_01;
@@ -5,23 +7,30 @@ mod part_01;
 fn main() -> io::Result<()> {
     let input = parse_input(include_str!("../../input/day_02"));
 
-    let mut input_for_part_01 = input[0].clone();
-    input_for_part_01[1] = 12;
-    input_for_part_01[2] = 2;
+    'part_01: {
+        let mut input_for_part_01 = input[0].clone();
+        input_for_part_01[1] = 12;
+        input_for_part_01[2] = 2;
 
-    let output_for_part_01 = part_01::main(&input_for_part_01).unwrap();
+        let output_for_part_01 = part_01::main(&input_for_part_01).unwrap()[0];
 
-    println!("part01: {}", output_for_part_01[0]);
+        println!("part_01: {}", output_for_part_01);
+    }
 
-    for noun in 0..=99 {
-        for verb in 0..=99 {
-            let mut input_for_part_02 = input[0].clone();
-            input_for_part_02[1] = noun;
-            input_for_part_02[2] = verb;
-            let output = part_01::main(&input_for_part_02).unwrap()[0];
-            if output == 19690720 {
-                println!("part02: {}", (100 * noun + verb));
-                break;
+    'part_02: {
+        let look_for = 19690720;
+        for noun in 0..=99 {
+            for verb in 0..=99 {
+                let mut input_for_part_02 = input[0].clone();
+                input_for_part_02[1] = noun;
+                input_for_part_02[2] = verb;
+
+                let output = part_01::main(&input_for_part_02).unwrap()[0];
+
+                if output == look_for {
+                    println!("part_02: {}", (100 * noun + verb));
+                    break;
+                }
             }
         }
     }

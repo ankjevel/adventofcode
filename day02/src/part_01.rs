@@ -2,27 +2,22 @@ use std::io;
 
 pub fn main(input: &Vec<u32>) -> io::Result<Vec<u32>> {
     let mut copy_of_input = input.clone();
-    let mut i = 0;
-
+    let mut current_position = 0;
     loop {
-        let opcode = copy_of_input[i];
-
+        let opcode = copy_of_input[current_position];
         if opcode == 99 {
             break;
         }
 
-        let x = copy_of_input[copy_of_input[i + 1] as usize];
-        let y = copy_of_input[copy_of_input[i + 2] as usize];
-        let result = copy_of_input[i + 3] as usize;
-
-        copy_of_input[result] = match opcode {
-            1 => x + y,
-            2 => x * y,
+        let noun = copy_of_input[copy_of_input[current_position + 1] as usize];
+        let verb = copy_of_input[copy_of_input[current_position + 2] as usize];
+        let output_position = copy_of_input[current_position + 3] as usize;
+        copy_of_input[output_position] = match opcode {
+            1 => noun + verb,
+            2 => noun * verb,
             _ => panic!("unexpected opcode: {}", opcode),
         };
-
-        i = i + 4;
+        current_position += 4;
     }
-
     Ok(copy_of_input)
 }
