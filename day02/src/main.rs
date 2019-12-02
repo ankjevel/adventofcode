@@ -4,12 +4,15 @@ use std::io::Result;
 
 struct Program {
     input: Vec<u32>,
-    pointer: usize
+    pointer: usize,
 }
 
 impl Program {
     fn new(input: &Vec<u32>) -> Program {
-        Program { input: input.clone(), pointer: 0 }
+        Program {
+            input: input.clone(),
+            pointer: 0,
+        }
     }
 
     fn patch(&mut self, index: usize, value: u32) {
@@ -23,7 +26,7 @@ impl Program {
             let opcode = self.input[self.pointer];
 
             if opcode == 99 {
-                break self.input[self.pointer];
+                break self.input[0];
             }
 
             let noun = self.input[self.input[self.pointer + 1] as usize];
@@ -48,7 +51,7 @@ fn parse_input(string: &str) -> Vec<Vec<u32>> {
         .filter(|string| !string.is_empty())
         .map(|string| {
             string
-                .split(",")
+                .split(',')
                 .map(|part| part.parse::<u32>().unwrap())
                 .collect::<Vec<u32>>()
         })
@@ -113,5 +116,17 @@ mod tests {
         assert_eq!(results[1], [2, 3, 0, 6, 99]);
         assert_eq!(results[2], [2, 4, 4, 5, 99, 9801]);
         assert_eq!(results[3], [30, 1, 1, 4, 2, 5, 6, 0, 99]);
+    }
+
+    #[test]
+    fn patch_paramters() {
+        let mut program = Program::new(&vec![1, 0, 0, 0, 99]);
+        program.patch(1, 3);
+        program.patch(2, 1);
+
+        let output = program.run();
+
+        assert_eq!(program.input, [3, 3, 1, 0, 99]);
+        assert_eq!(output, 3);
     }
 }
