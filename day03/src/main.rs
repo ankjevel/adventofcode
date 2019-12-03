@@ -4,9 +4,11 @@ use std::io::Result;
 
 pub mod manhattan;
 mod part_01;
+mod part_02;
 pub mod structs;
 
 use part_01::main as part_01;
+use part_02::main as part_02;
 use structs::Direction::{Down, Left, Right, Up};
 use structs::Movement;
 
@@ -16,6 +18,8 @@ fn main() -> Result<()> {
     let wires = parse_input(include_str!("../../input/day_03"));
 
     println!("part_01: {:?}", part_01(&wires).unwrap());
+    println!("part_02: {:?}", part_02(&wires).unwrap());
+
     Ok(())
 }
 
@@ -59,12 +63,25 @@ mod tests {
 
     const EXAMPLE_DATA_02: &'static str = "
         R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51
-        U98,R91,D20,R16,D67,R40,U7,R15,U6,R77
+        U98,R91,D20,R16,D67,R40,U7,R15,U6,R7
+    ";
+
+    const EXAMPLE_DATA_00: &'static str = "
+        R8,U5,L5,D3
+        U7,R6,D4,L4
     ";
 
     #[test]
-    fn it_gets_the_correct_result_based_on_examples() {
+    fn it_gets_the_correct_result_based_on_examples_for_part_1() {
+        assert_eq!(6, part_01(&parse_input(EXAMPLE_DATA_00)).unwrap());
         assert_eq!(159, part_01(&parse_input(EXAMPLE_DATA_01)).unwrap());
         assert_eq!(135, part_01(&parse_input(EXAMPLE_DATA_02)).unwrap());
+    }
+
+    #[test]
+    fn it_gets_the_correct_result_based_on_examples_for_part_2() {
+        assert_eq!(30, part_02(&parse_input(EXAMPLE_DATA_00)).unwrap());
+        assert_eq!(610, part_02(&parse_input(EXAMPLE_DATA_01)).unwrap());
+        assert_eq!(410, part_02(&parse_input(EXAMPLE_DATA_02)).unwrap());
     }
 }
