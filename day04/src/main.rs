@@ -1,30 +1,39 @@
-#![feature(label_break_value)]
-
 use std::io::Result;
 
 mod part_01;
+mod part_02;
 
 use part_01::main as part_01;
-
-const PUZZLE_INPUT: &'static str = "347312-805915";
+use part_02::main as part_02;
 
 fn main() -> Result<()> {
-    'part_01: {
-        println!("part_01: {}", part_01(&PUZZLE_INPUT).unwrap());
-    }
+    let input = vec![347312, 805915];
 
-    'part_02: {}
+    println!("part_01: {}", part_01(&input).unwrap());
+    println!("part_02: {}", part_02(&input).unwrap());
+
     Ok(())
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::part_01::meet_criteria as part_01;
+    use super::part_02::meet_criteria as part_02;
 
     #[test]
     fn it_gets_the_right_answer_for_examples() {
-        assert_eq!(true, part_01::meet_criteria("111111"));
-        assert_eq!(false, part_01::meet_criteria("223450"));
-        assert_eq!(false, part_01::meet_criteria("123789"));
+        assert_eq!(part_01("111111"), true);
+        assert_eq!(part_01("223450"), false);
+        assert_eq!(part_01("123789"), false);
+        assert_eq!(part_01("122345"), true);
+        assert_eq!(part_01("135679"), false);
+        assert_eq!(part_01("111123"), true);
+    }
+
+    #[test]
+    fn it_gets_the_right_answer_for_examples_on_part_2() {
+        assert_eq!(part_02("112233"), true);
+        assert_eq!(part_02("123444"), false);
+        assert_eq!(part_02("111122"), true);
     }
 }
