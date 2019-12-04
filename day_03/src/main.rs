@@ -17,8 +17,8 @@ pub use structs::Point;
 fn main() -> Result<()> {
     let wires = parse_input(include_str!("../../input/day_03"));
 
-    println!("part_01: {:?}", part_01(&wires).unwrap());
-    println!("part_02: {:?}", part_02(&wires).unwrap());
+    println!("part_01: {}", part_01(&wires).unwrap());
+    println!("part_02: {}", part_02(&wires).unwrap());
 
     Ok(())
 }

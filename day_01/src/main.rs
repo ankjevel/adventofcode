@@ -9,8 +9,8 @@ fn main() -> io::Result<()> {
     let part_01_fuel = part_01::main(&input).unwrap().iter().sum::<i32>();
     let part_02_sum_of_fuel = part_02::main(&input).unwrap();
 
-    println!("part 1; fuel: {}", part_01_fuel);
-    println!("part 2; sum: {}", part_02_sum_of_fuel);
+    println!("part 1: {}", part_01_fuel);
+    println!("part 2: {}", part_02_sum_of_fuel);
 
     Ok(())
 }

@@ -7,12 +7,24 @@ use part_01::main as part_01;
 use part_02::main as part_02;
 
 fn main() -> Result<()> {
-    let input = vec![347312, 805915];
+    let input = parse_input(include_str!("../../input/day_04"));
 
     println!("part_01: {}", part_01(&input).unwrap());
     println!("part_02: {}", part_02(&input).unwrap());
 
     Ok(())
+}
+
+fn parse_input(input: &str) -> Vec<u32> {
+    input
+        .lines()
+        .map(|string| string.trim())
+        .filter(|string| !string.is_empty())
+        .next()
+        .unwrap()
+        .split('-')
+        .map(|part| part.parse::<u32>().unwrap())
+        .collect::<Vec<u32>>()
 }
 
 #[cfg(test)]
