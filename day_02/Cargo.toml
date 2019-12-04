@@ -2,5 +2,6 @@
 name = "day02"
 version = "0.1.0"
 authors = ["Dennis Pettersson <mail@dennispettersson.se>"]
+edition = "2018"
 
 [dependencies]
