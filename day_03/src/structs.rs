@@ -3,7 +3,7 @@ pub enum Direction {
     Up,
     Down,
     Left,
-    Right
+    Right,
 }
 
 #[derive(Clone, Copy, Eq, PartialEq, Hash, Debug)]
@@ -13,7 +13,7 @@ pub struct Movement {
 }
 
 impl Movement {
-    pub fn new (input: &str) -> Movement {
+    pub fn new(input: &str) -> Movement {
         let mut chars = input.chars();
 
         let direction = match chars.next().unwrap() {
@@ -21,15 +21,12 @@ impl Movement {
             'D' => Direction::Down,
             'L' => Direction::Left,
             'R' => Direction::Right,
-            _ => panic!("direction not defined")
+            _ => panic!("direction not defined"),
         };
 
         let steps = chars.as_str().parse::<i32>().unwrap();
 
-        Movement {
-            direction,
-            steps,
-        }
+        Movement { direction, steps }
     }
 }
 
@@ -40,10 +37,7 @@ pub struct Point {
 }
 
 impl Point {
-    pub fn new () -> Point {
-        Point {
-            x: 0,
-            y: 0,
-        }
+    pub fn new() -> Point {
+        Point { x: 0, y: 0 }
     }
 }
