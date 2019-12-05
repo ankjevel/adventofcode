@@ -1,8 +1,8 @@
-#![feature(label_break_value)]
 use std::io::Result;
 use std::option::Option;
 
 struct Program {
+    original_memory: Vec<i32>,
     memory: Vec<i32>,
     pointer: usize,
     input: i32,
@@ -13,49 +13,85 @@ impl Program {
     fn new(memory: &Vec<i32>) -> Program {
         Program {
             memory: memory.clone(),
+            original_memory: memory.clone(),
             pointer: 0,
             input: 0,
             output: Vec::new(),
         }
     }
 
-    fn mode_1_2(&mut self, opcode: i32, position_mode_noun: bool, position_mode_verb: bool, position_mode_pos: bool) {
-        let mut noun_index: usize = self.pointer + 1;
-        let mut verb_index: usize = self.pointer + 2;
-        let mut out_index: usize = self.pointer + 3;
-
-        if position_mode_noun {
-            noun_index = self.memory[noun_index] as usize;
+    fn get_index(&mut self, step: usize, positional: bool) -> usize {
+        if positional {
+            self.memory[self.pointer + step] as usize
+        } else {
+            self.pointer + step
         }
-        if position_mode_verb {
-            verb_index = self.memory[verb_index] as usize;
-        };
-        if position_mode_pos {
-            out_index = self.memory[out_index] as usize;
-        };
+    }
 
+    fn mode_1_2(&mut self, opcode: i32, positional_first: bool, positional_second: bool) -> usize {
+        let noun_index = self.get_index(1, positional_first);
+        let verb_index = self.get_index(2, positional_second);
+        let out_index = self.get_index(3, true);
         let noun = self.memory[noun_index];
         let verb = self.memory[verb_index];
-
         self.memory[out_index] = if opcode == 1 {
             noun + verb
         } else {
             noun * verb
         };
+
+        4
     }
 
-    fn mode_3_4(&mut self, opcode: i32, position_mode_noun: bool) {
-        let index = if position_mode_noun {
-            self.memory[self.pointer + 1] as usize
-        } else {
-            self.pointer + 1
-        };
-
+    fn mode_3_4(&mut self, opcode: i32) -> usize {
+        let index = self.get_index(1, true);
         if opcode == 3 {
             self.memory[index] = self.input.clone();
         } else {
-            self.output.push(self.memory[index].clone());
+            let output = self.memory[index].clone();
+            self.output.push(output);
+        };
+
+        2
+    }
+
+    fn mode_5_6(
+        &mut self,
+        opcode: i32,
+        position_mode_first: bool,
+        position_mode_second: bool,
+    ) -> usize {
+        let first_index = self.get_index(1, position_mode_first);
+        let second_index = self.get_index(2, position_mode_second);
+        let param_1 = self.memory[first_index];
+        let param_2 = self.memory[second_index];
+
+        if (opcode == 5 && param_1 != 0) || (opcode == 6 && param_1 == 0) {
+            param_2 as usize - self.pointer
+        } else {
+            3
         }
+    }
+
+    fn mode_7_8(
+        &mut self,
+        opcode: i32,
+        position_mode_first: bool,
+        position_mode_second: bool,
+    ) -> usize {
+        let first_index = self.get_index(1, position_mode_first);
+        let second_index = self.get_index(2, position_mode_second);
+        let third_index = self.get_index(3, true);
+
+        let a = self.memory[first_index];
+        let b = self.memory[second_index];
+
+        self.memory[third_index] = if (opcode == 7 && a < b) || (opcode == 8 && a == b) {
+            1
+        } else {
+            0
+        };
+        4
     }
 
     fn to_int(&mut self, input: &char) -> i32 {
@@ -68,6 +104,8 @@ impl Program {
 
     fn run(&mut self) -> i32 {
         self.pointer = 0;
+        self.output = Vec::new();
+        self.memory = self.original_memory.clone();
 
         loop {
             let opcode = self.memory[self.pointer];
@@ -76,39 +114,19 @@ impl Program {
                 break self.memory[0];
             }
 
-            match opcode {
-                1 | 2 => {
-                    self.mode_1_2(opcode, true, true, true);
-                    self.pointer += 4;
-                }
-                3 | 4 => {
-                    self.mode_3_4(opcode, true);
-                    self.pointer += 2;
-                }
-                _ => {
-                    let string = opcode.to_string();
-                    let mut instuction = string.chars().rev();
-                    let opcode = self.to_int(&instuction.next().unwrap());
-                    instuction.next();
-                    match opcode {
-                        1 | 2 => {
-                            let mut pointer = instuction.clone();
-                            let position_mode_noun = self.position_mode(&pointer.next());
-                            let position_mode_verb = self.position_mode(&pointer.next());
-                            let position_mode_pos = self.position_mode(&pointer.next());
-                            self.mode_1_2(opcode, position_mode_noun, position_mode_verb, position_mode_pos);
-                            self.pointer += 4
-                        }
-                        3 | 4 => {
-                            let position_mode = self.position_mode(&instuction.next());
-                            self.mode_3_4(opcode, position_mode);
-                            self.pointer += 2
-                        }
-                        _ => {
-                            panic!("opcode: {}", opcode)
-                        }
-                    }
-                }
+            let string = opcode.to_string();
+            let mut instuction = string.chars().rev();
+            let opcode = self.to_int(&instuction.next().unwrap());
+            instuction.next();
+            let positional_first = self.position_mode(&instuction.next());
+            let positional_second = self.position_mode(&instuction.next());
+
+            self.pointer += match opcode {
+                1 | 2 => self.mode_1_2(opcode, positional_first, positional_second),
+                3 | 4 => self.mode_3_4(opcode),
+                5 | 6 => self.mode_5_6(opcode, positional_first, positional_second),
+                7 | 8 => self.mode_7_8(opcode, positional_first, positional_second),
+                _ => panic!("opcode: {}", opcode),
             };
         }
     }
@@ -130,14 +148,15 @@ fn parse_input(string: &str) -> Vec<Vec<i32>> {
 
 fn main() -> Result<()> {
     let input = parse_input(include_str!("../../input/day_05"));
-
     let mut program = Program::new(&input[0]);
 
     program.input = 1;
     program.run();
-
-    println!("part_01: {}", program.run());
     println!("part_01: {:?}", program.output);
+
+    program.input = 5;
+    program.run();
+    println!("part_02: {:?}", program.output);
 
     Ok(())
 }
@@ -160,7 +179,6 @@ mod tests {
 
     #[test]
     fn it_still_works_with_example_data_from_day_02() {
-        println!("\n");
         let input = parse_input(EXAMPLE_DATA_FROM_DAY_02);
 
         let results = input
@@ -177,7 +195,6 @@ mod tests {
         assert_eq!(results[1], [2, 3, 0, 6, 99]);
         assert_eq!(results[2], [2, 4, 4, 5, 99, 9801]);
         assert_eq!(results[3], [30, 1, 1, 4, 2, 5, 6, 0, 99]);
-        println!("\n");
     }
 
     #[test]
@@ -189,11 +206,13 @@ mod tests {
             .map(|row| {
                 let mut program = Program::new(&row);
                 program.run();
-                program.memory
+                program
             })
-            .collect::<Vec<Vec<i32>>>();
+            .collect::<Vec<Program>>();
 
-        assert_eq!(results[0], [1101, 100, -1, 4, 99]);
-        assert_eq!(results[1], [1002, 4, 3, 4, 99]);
+        assert_eq!(results[0].memory, [1101, 100, -1, 4, 99]);
+        assert_eq!(results[1].memory, [1002, 4, 3, 4, 99]);
+        assert_eq!(results[0].output, []);
+        assert_eq!(results[1].output, []);
     }
 }
