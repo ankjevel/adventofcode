@@ -96,7 +96,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn it_gets_the_example_right_for_part_02() {
         let example_data = parse_input(&EXAMPLE_DATA_PART_02);
         let unordered_example_data = parse_input(&UNORDERED_EXAMPLE_DATA_PART_02);
