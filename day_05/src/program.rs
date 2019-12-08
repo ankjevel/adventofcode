@@ -1,33 +1,41 @@
-use std::iter::Iterator;
-use std::option::Option;
-// use std::collections::VecDeque;
+use std::{
+    iter::Iterator,
+    option::Option,
+    sync::mpsc::{channel, Receiver, Sender},
+    thread::{spawn, JoinHandle},
+};
 
 pub struct Program {
     original_memory: Vec<i32>,
     pointer: usize,
-    input_pointer: usize,
-    input: Vec<i32>,
+    input: Receiver<i32>,
     halted: bool,
+    output: Sender<i32>,
+    output_value: i32,
     pub memory: Vec<i32>,
-    pub output: Vec<i32>,
 }
 
 impl Program {
     pub fn new(memory: &Vec<i32>) -> Program {
+        let (output, input) = channel();
+
         Program {
             original_memory: memory.clone(),
             pointer: 0,
-            input: vec![0],
-            input_pointer: 0,
+            output_value: 0,
+            input,
             halted: false,
             memory: memory.clone(),
-            output: Vec::new(),
+            output,
         }
     }
 
-    pub fn new_input(&mut self, input: &Vec<i32>) {
-        self.input_pointer = 0;
-        self.input = input.clone();
+    pub fn new_input(&mut self, input: Receiver<i32>) {
+        self.input = input;
+    }
+
+    pub fn new_output(&mut self, output: Sender<i32>) {
+        self.output = output;
     }
 
     pub fn is_halted(&self) -> bool {
@@ -60,12 +68,12 @@ impl Program {
     fn mode_3_4(&mut self, opcode: i32) -> usize {
         let index = self.get_index(1, true);
         if opcode == 3 {
-            let input = self.input.get(self.input_pointer).unwrap_or(&0);
-            self.input_pointer += 1;
-            self.memory[index] = *input;
+            let input = self.input.recv().unwrap_or(0);
+            self.memory[index] = input.to_owned();
         } else {
             let output = self.memory[index].clone();
-            self.output.push(output);
+            self.output.send(output.to_owned()).unwrap_or(());
+            self.output_value = output.to_owned();
         };
 
         2
@@ -120,15 +128,15 @@ impl Program {
 
     pub fn run(&mut self) -> i32 {
         self.pointer = 0;
-        self.output = Vec::new();
-        self.memory = self.original_memory.clone();
+        self.output_value = 0;
         self.halted = false;
+        self.memory = self.original_memory.clone();
 
         while !self.halted {
             self.eval()
         }
 
-        *self.output.last().unwrap_or(&0i32)
+        self.output_value.to_owned()
     }
 
     fn eval(&mut self) {
@@ -151,7 +159,42 @@ impl Program {
             3 | 4 => self.mode_3_4(opcode),
             5 | 6 => self.mode_5_6(opcode, positional_first, positional_second),
             7 | 8 => self.mode_7_8(opcode, positional_first, positional_second),
-            _ => panic!("opcode: {}", opcode),
+            9 => {
+                self.halted = true;
+                0
+            }
+            _ => panic!("[{}], opcode: {}", self.pointer, opcode),
         };
     }
+}
+
+pub fn exec(memory: Vec<i32>, input: Receiver<i32>, output: Sender<i32>) -> JoinHandle<i32> {
+    spawn(move || {
+        let mut program = Program::new(&memory);
+        program.new_input(input);
+        program.new_output(output);
+        program.run()
+    })
+}
+
+pub fn exec_without_channels(memory: Vec<i32>, input: Option<Vec<i32>>) -> i32 {
+    let (c_out, c_in) = channel();
+    match input {
+        Some(input) => {
+            for seq in input.clone() {
+                c_out.send(seq).unwrap();
+            }
+        }
+        None => {
+            c_out.send(0).unwrap();
+        }
+    };
+    spawn(move || {
+        let mut program = Program::new(&memory);
+        program.new_input(c_in);
+        program.new_output(c_out);
+        program.run()
+    })
+    .join()
+    .unwrap()
 }
