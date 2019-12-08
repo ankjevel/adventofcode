@@ -1,11 +1,9 @@
 [package]
-name = "day_05"
+name = "day_07"
 version = "0.1.0"
 authors = ["Dennis Pettersson <mail@dennispettersson.se>"]
 edition = "2018"
 
 [dependencies]
-
-[[bin]]
-name = "day_04"
-path = "src/bin/main.rs"
+day_05 = { path = "../day_05" }
+permute = "0.1.0"
