@@ -8,7 +8,7 @@ use day_05::{
 use permute::permute;
 use std::{iter::Iterator, sync::mpsc::channel};
 
-fn part_01(sequence: &Vec<i32>, memory: &Vec<i32>) -> i32 {
+fn part_01(sequence: &Vec<i64>, memory: &Vec<i64>) -> i64 {
     let mut input = vec![0];
     for signal in sequence {
         input.insert(0, signal.to_owned());
@@ -20,28 +20,28 @@ fn part_01(sequence: &Vec<i32>, memory: &Vec<i32>) -> i32 {
     input[0]
 }
 
-fn part_02(sequence: &Vec<i32>, memory: &Vec<i32>) -> i32 {
+fn part_02(sequence: &Vec<i64>, memory: &Vec<i64>) -> i64 {
     let mut seq = sequence.to_owned();
     let mut iter = seq.iter_mut();
 
-    let (e_out, a_in) = channel();
-    let (a_out, b_in) = channel();
-    let (b_out, c_in) = channel();
-    let (c_out, d_in) = channel();
-    let (d_out, e_in) = channel();
+    let (e_sender, a_receiver) = channel();
+    let (a_sender, b_receiver) = channel();
+    let (b_sender, c_receiver) = channel();
+    let (c_sender, d_receiver) = channel();
+    let (d_sender, e_receiver) = channel();
 
-    e_out.send(*iter.next().unwrap()).unwrap();
-    a_out.send(*iter.next().unwrap()).unwrap();
-    b_out.send(*iter.next().unwrap()).unwrap();
-    c_out.send(*iter.next().unwrap()).unwrap();
-    d_out.send(*iter.next().unwrap()).unwrap();
-    e_out.send(0).unwrap();
+    e_sender.send(*iter.next().unwrap()).unwrap();
+    a_sender.send(*iter.next().unwrap()).unwrap();
+    b_sender.send(*iter.next().unwrap()).unwrap();
+    c_sender.send(*iter.next().unwrap()).unwrap();
+    d_sender.send(*iter.next().unwrap()).unwrap();
+    e_sender.send(0).unwrap();
 
-    exec(memory.clone(), a_in, a_out);
-    exec(memory.clone(), b_in, b_out);
-    exec(memory.clone(), c_in, c_out);
-    exec(memory.clone(), d_in, d_out);
-    exec(memory.clone(), e_in, e_out).join().unwrap()
+    exec(memory.clone(), a_receiver, a_sender);
+    exec(memory.clone(), b_receiver, b_sender);
+    exec(memory.clone(), c_receiver, c_sender);
+    exec(memory.clone(), d_receiver, d_sender);
+    exec(memory.clone(), e_receiver, e_sender).join().unwrap()
 }
 
 fn main() {

@@ -1,4 +1,4 @@
-pub fn parse_input(string: &str) -> Vec<Vec<i32>> {
+pub fn parse_input(string: &str) -> Vec<Vec<i64>> {
     string
         .lines()
         .map(|string| string.trim())
@@ -6,8 +6,8 @@ pub fn parse_input(string: &str) -> Vec<Vec<i32>> {
         .map(|string| {
             string
                 .split(',')
-                .map(|part| part.parse::<i32>().unwrap())
-                .collect::<Vec<i32>>()
+                .map(|part| part.parse::<i64>().unwrap())
+                .collect::<Vec<i64>>()
         })
         .collect()
 }

@@ -6,7 +6,7 @@ fn main() -> Result<()> {
 
     println!(
         "part_01: {:?}",
-        exec_without_channels(input[0].clone(), None)
+        exec_without_channels(input[0].clone(), Some(vec![1]))
     );
     println!(
         "part_02: {:?}",
