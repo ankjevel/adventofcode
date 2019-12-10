@@ -1,10 +1,10 @@
 use crate::point::Point;
 
-fn distance(p1: &Point, p2: &Point) -> f64 {
+pub fn distance(p1: &Point, p2: &Point) -> f64 {
     ((p2.x as f64 - p1.x as f64).powf(2f64) + (p2.y as f64 - p1.y as f64).powf(2f64)).sqrt()
 }
 
-fn is_between(a: &Point, c: &Point, b: &Point) -> bool {
+pub fn is_between(a: &Point, c: &Point, b: &Point) -> bool {
     approx_eq!(
         f64,
         distance(&a, &c) + distance(&c, &b),

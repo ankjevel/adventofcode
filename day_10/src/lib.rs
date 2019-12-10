@@ -1,7 +1,9 @@
 #[macro_use]
 extern crate float_cmp;
 
+pub mod angle;
 pub mod part_01;
+pub mod part_02;
 pub mod point;
 
 pub type Input = Vec<Vec<char>>;
