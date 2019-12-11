@@ -1,7 +1,7 @@
 use ::day_10::{parse_input, part_01::main as part_01, part_02::main as part_02, to_points};
 
 fn main() {
-    let input = to_points(&parse_input(include_str!("../../../input/day_10")));
+    let input = to_points(&parse_input(include_str!("../../input/day_10")));
     let (result_part_01, input_for_part_02) = part_01(&input);
     println!("part_01: {}", result_part_01);
     println!("part_02: {}", part_02(&input, &input_for_part_02));
