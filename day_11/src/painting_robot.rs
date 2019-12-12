@@ -15,13 +15,16 @@ pub struct Robot {
 }
 
 impl Robot {
-    pub fn new(receiver: Receiver<i64>, sender: Sender<i64>) -> Robot {
+    pub fn new(receiver: Receiver<i64>, sender: Sender<i64>, start_on_white: bool) -> Robot {
         let position = Point { x: 0, y: 0 };
         let mut visited = HashSet::new();
         let mut whites = HashSet::new();
 
         visited.insert(position.clone());
-        whites.insert(position.clone());
+
+        if start_on_white {
+            whites.insert(position.clone());
+        }
 
         Robot {
             input: receiver,
@@ -64,6 +67,8 @@ impl Robot {
                 self.whites.insert(self.position.clone());
             }
 
+            self.visited.insert(self.position.clone());
+
             let next_position = match self.input.recv() {
                 Ok(0) => 0u8,
                 Ok(1) => 1u8,
@@ -72,7 +77,6 @@ impl Robot {
 
             self.direction.turn(next_position);
             self.move_position();
-            self.visited.insert(self.position.clone());
         }
 
         self.visited.len()
