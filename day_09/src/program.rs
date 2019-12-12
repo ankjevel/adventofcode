@@ -1,4 +1,9 @@
-use std::{iter::Iterator, option::Option};
+use std::{
+    iter::Iterator,
+    option::Option,
+    sync::mpsc::{channel, Receiver, Sender},
+    thread::spawn,
+};
 
 #[derive(Clone, Copy, Eq, PartialEq, Hash, Debug)]
 enum Mode {
@@ -12,29 +17,34 @@ pub struct Program {
     pointer: usize,
     relative_base: usize,
     halted: bool,
-    pub input: Vec<i64>,
-    pub output: Vec<i64>,
+    input: Receiver<i64>,
+    output: Sender<i64>,
+    output_value: i64,
     pub memory: Vec<i64>,
 }
 
 impl Program {
     pub fn new(memory: &Vec<i64>) -> Program {
+        let (output, input) = channel();
+
         Program {
             original_memory: memory.clone(),
             pointer: 0,
             relative_base: 0,
-            input: vec![0],
+            input,
             halted: false,
             memory: memory.clone(),
-            output: vec![],
+            output,
+            output_value: 0,
         }
     }
 
-    fn get_next_input(&mut self) -> Option<i64> {
-        match self.input.iter_mut().next() {
-            Some(input) => Some(*input),
-            _ => None,
-        }
+    pub fn new_input(&mut self, receiver: Receiver<i64>) {
+        self.input = receiver;
+    }
+
+    pub fn new_output(&mut self, sender: Sender<i64>) {
+        self.output = sender;
     }
 
     fn get_index(&mut self, step: usize, mode: Mode) -> usize {
@@ -108,15 +118,12 @@ impl Program {
 
     fn opcode_3_4(&mut self, opcode: i64, mode: Mode) -> i64 {
         if opcode == 3 {
-            match self.get_next_input() {
-                Some(input) => {
-                    *self.get_mut_memory_ref(1, mode) = input;
-                }
-                _ => {}
-            }
+            let input = self.input.recv().unwrap_or(0);
+            *self.get_mut_memory_ref(1, mode) = input;
         } else {
             let output = self.get_memory(1, mode);
-            self.output.push(output);
+            self.output.send(output.to_owned()).unwrap();
+            self.output_value = output;
         };
         2
     }
@@ -160,16 +167,16 @@ impl Program {
 
     pub fn run(&mut self) -> i64 {
         self.pointer = 0;
+        self.output_value = 0;
         self.halted = false;
         self.memory = self.original_memory.clone();
         self.relative_base = 0;
-        self.output.clear();
 
         while !self.halted {
-            self.eval()
+            self.eval();
         }
 
-        *self.output.clone().iter().last().unwrap_or(&0i64)
+        self.output_value.to_owned()
     }
 
     fn eval(&mut self) {
@@ -182,7 +189,6 @@ impl Program {
         let mode_first = self.mode(&instuction.next());
         let mode_second = self.mode(&instuction.next());
         let mode_third = self.mode(&instuction.next());
-
 
         if opcode == 9 && opcode_padding == 9 {
             self.halted = true;
@@ -202,13 +208,25 @@ impl Program {
     }
 }
 
-pub fn exec(memory: &Vec<i64>, input: Option<Vec<i64>>) -> i64 {
-    let input_unwrapped = match input {
-        Some(input) => input.to_owned(),
-        None => vec![0],
+pub fn exec(memory: Vec<i64>, output: Option<Vec<i64>>) -> i64 {
+    let (program_sender, _exec_reciever) = channel();
+    let (exec_sender, program_receiver) = channel();
+
+    match output {
+        Some(vec) => {
+            vec.into_iter().for_each(|val| {
+                exec_sender.send(val).unwrap();
+            });
+        }
+        None => {}
     };
 
-    let mut program = Program::new(memory);
-    program.input = input_unwrapped;
-    program.run()
+    let handle = spawn(move || {
+        let mut program = Program::new(&memory);
+        program.new_input(program_receiver);
+        program.new_output(program_sender);
+        program.run()
+    });
+
+    handle.join().unwrap()
 }
