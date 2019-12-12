@@ -13,3 +13,4 @@
 - [Day 8](https://github.com/ankjevel/adventofcode/tree/2019/day_08) 🌟 🌟
 - [Day 9](https://github.com/ankjevel/adventofcode/tree/2019/day_09) 🌟 🌟
 - [Day 10](https://github.com/ankjevel/adventofcode/tree/2019/day_10) 🌟 🌟
+- [Day 11](https://github.com/ankjevel/adventofcode/tree/2019/day_11) 🌟 🌟
