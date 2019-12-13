@@ -8,3 +8,4 @@ edition = "2018"
 
 [dependencies]
 day_09 = { path = "../day_09" }
+termion = "1.5.4"

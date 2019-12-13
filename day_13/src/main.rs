@@ -1,37 +1,6 @@
-use ::day_13::{get_instructions, into_chunks, parse_input, Tile::*};
-
-fn print(input: &Vec<i64>) {
-    let instructions = into_chunks(&get_instructions(input));
-    let max_x = &instructions
-        .iter()
-        .fold(0, |prev, curr| if prev < curr.0 { curr.0 } else { prev });
-    let max_y = &instructions
-        .iter()
-        .fold(0, |prev, curr| if prev < curr.1 { curr.1 } else { prev });
-    let mut grid = vec![vec![' '; (max_x + 1) as usize]; (max_y + 1) as usize];
-    for (x, y, tile) in instructions {
-        if tile == Empty {
-            continue;
-        }
-
-        if let Some(elem) = grid.get_mut(y) {
-            elem.insert(
-                x,
-                match tile {
-                    Wall => '#',
-                    Block => '◻',
-                    HorizontalPaddle => '=',
-                    Ball => 'o',
-                    _ => ' ',
-                },
-            );
-        }
-    }
-
-    for row in grid.into_iter() {
-        println!("{}", row.into_iter().collect::<String>())
-    }
-}
+use ::day_13::{game::Game, get_instructions, into_chunks, parse_input, Tile::*};
+use day_09::program::Program;
+use std::{sync::mpsc::channel, thread::spawn};
 
 fn part_01(input: &Vec<i64>) -> usize {
     let instructions = into_chunks(&get_instructions(input));
@@ -41,8 +10,29 @@ fn part_01(input: &Vec<i64>) -> usize {
     )
 }
 
+fn part_02(input: &Vec<i64>) -> u32 {
+    let mut code = input.clone();
+    code[0] = 2;
+
+    let (b_sender, a_receiver) = channel();
+    let (a_sender, b_receiver) = channel();
+
+    let mut program = Program::new(&code);
+
+    program.new_input(b_receiver);
+    program.new_output(b_sender);
+
+    spawn(move || program.run());
+    spawn(move || Game::new(a_receiver, a_sender).run())
+        .join()
+        .unwrap()
+}
+
 fn main() {
     let input = parse_input(&include_str!("../../input/day_13"));
-    println!("part_01: {}", part_01(&input));
-    print(&input);
+    let part_01_output = part_01(&input);
+    let part_02_output = part_02(&input);
+
+    println!("part_01: {}", part_01_output);
+    println!("part_02: {}", part_02_output)
 }

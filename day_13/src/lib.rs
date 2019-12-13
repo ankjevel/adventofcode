@@ -1,4 +1,7 @@
 extern crate day_09;
+extern crate termion;
+
+pub mod game;
 
 use day_09::program::Program;
 use std::{sync::mpsc::channel, thread::spawn};
@@ -73,7 +76,11 @@ pub fn into_chunks(input: &Vec<i64>) -> Vec<(usize, usize, Tile)> {
             let x = iter.next().unwrap();
             let y = iter.next().unwrap();
             let id = iter.next().unwrap();
-            (x.to_owned() as usize, y.to_owned() as usize, Tile::from(id))
+            (
+                x.to_owned() as usize,
+                y.to_owned() as usize,
+                Tile::from(&id),
+            )
         })
         .collect::<Vec<_>>()
 }
