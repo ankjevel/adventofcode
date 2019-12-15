@@ -1,71 +1,69 @@
-use ::day_14::{parse_input, Item};
-use std::collections::{HashMap, LinkedList};
+use ::day_14::{parse_input, to_map, Item, Output};
+use std::{collections::HashMap, mem::replace};
 
-#[derive(Clone, Eq, PartialEq, Hash, Debug)]
-struct Output {
-    pub quantity: u8,
-    pub required: Vec<Item>,
-}
+fn get_requirements(reactions: &HashMap<String, Output>, quantity: i64) -> i64 {
+    let mut reserves: HashMap<String, i64> = HashMap::new();
+    let mut required = HashMap::new();
+    required.insert("FUEL".to_owned(), quantity.to_owned());
 
-fn to_map(input: &Vec<(Item, Vec<Item>)>) -> HashMap<String, Output> {
-    let mut map = HashMap::new();
+    while required.len() != 1 || !required.contains_key("ORE") {
+        let mut new_rec = HashMap::new();
 
-    for (key, value) in input {
-        map.insert(
-            key.0.to_owned(),
-            Output {
-                quantity: key.1,
-                required: value.to_owned(),
-            },
-        );
-    }
+        for (chemical, quantity) in required.clone() {
+            if chemical == "ORE" {
+                *new_rec.entry("ORE".to_owned()).or_insert(0) += quantity.to_owned();
+                continue;
+            }
 
-    map
-}
+            let quantity = quantity as f64;
+            let reaction = reactions.get(&chemical).unwrap();
+            let reaction_quantity = reaction.quantity.to_owned() as f64;
+            let reserve_ref = reserves.entry(chemical.to_owned()).or_insert(0);
+            let reserve = reserve_ref.to_owned() as f64;
+            let reaction_count = (quantity - reserve) / reaction_quantity;
+            let reaction_count = reaction_count.ceil() as f64;
 
-fn get_requirements(map: &HashMap<String, Output>) -> Vec<Vec<String>> {
-    let fuel = &map.get("FUEL").unwrap();
-    let mut paths = vec![];
-    for item in &fuel.required {
-        let mut req = LinkedList::new();
-        req.push_front((item.clone(), vec![item.0.to_owned()]));
-        while req.len() > 0 {
-            if let Some(((key, _value), tree)) = req.pop_back() {
-                match map.get(&key) {
-                    Some(item) => {
-                        for required in &item.required {
-                            let mut tree = tree.clone();
-                            if !tree.contains(&key) {
-                                tree.insert(0, key.to_owned());
-                            }
-                            if !tree.contains(&required.0) {
-                                tree.insert(0, required.0.to_owned());
-                            }
-                            req.push_back((required.clone(), tree.to_owned()));
-                        }
-                    }
-                    None => paths.push(tree.clone()),
-                };
-            };
+            for (ingredient, amount) in &reaction.required {
+                let ingredient_ref = new_rec.entry(ingredient.to_owned()).or_insert(0);
+                let ingredient_pre = ingredient_ref.to_owned() as f64;
+                let amount = amount.to_owned() as f64;
+
+                *ingredient_ref = (ingredient_pre + reaction_count * amount) as i64;
+            }
+
+            *reserve_ref = (reserve + reaction_count * reaction_quantity - quantity).ceil() as i64;
         }
+
+        required = replace(&mut new_rec, HashMap::new());
     }
 
-    paths
+    required.entry("ORE".to_owned()).or_insert(0).to_owned()
 }
 
-fn part_01(input: &Vec<(Item, Vec<Item>)>) -> u32 {
-    let map = to_map(input);
-    let requirements = get_requirements(&map);
+type Input = Vec<(Item, Vec<Item>)>;
 
-    for req in requirements {
-        println!("{:?}", req);
+fn part_01(input: &Input) -> i64 {
+    get_requirements(&to_map(input), 1)
+}
+
+fn part_02(input: &Input) -> i64 {
+    let map = to_map(input);
+    let total_ore: i64 = 1_000_000_000_000;
+    let mut new_estimate = ((total_ore as f64) / (get_requirements(&map, 1) as f64)).floor() as i64;
+    let mut estimate = 0;
+    while new_estimate > estimate {
+        estimate = new_estimate.to_owned();
+        let needed = get_requirements(&map, estimate.to_owned());
+        new_estimate = ((estimate as f64) * (total_ore as f64) / (needed as f64)).floor() as i64;
     }
-    0
+
+    estimate
 }
 
 fn main() {
     let input = parse_input(include_str!("../../input/day_14"));
     println!("part_01: {}", part_01(&input));
+    println!("part_02: {:?}", part_02(&input));
 }
 
 #[cfg(test)]
@@ -136,5 +134,12 @@ mod tests {
         assert_eq!(part_01(&parse_input(&EXAMPLE_02)), 13312);
         assert_eq!(part_01(&parse_input(&EXAMPLE_03)), 180697);
         assert_eq!(part_01(&parse_input(&EXAMPLE_04)), 2210736);
+    }
+
+    #[test]
+    fn it_gets_same_same_results_as_the_second_part() {
+        assert_eq!(part_02(&parse_input(&EXAMPLE_02)), 82892753);
+        assert_eq!(part_02(&parse_input(&EXAMPLE_03)), 5586022);
+        assert_eq!(part_02(&parse_input(&EXAMPLE_04)), 460664);
     }
 }
