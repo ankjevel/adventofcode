@@ -114,12 +114,12 @@ impl RepairDroid {
 
             if let Some(elem) = grid.get_mut(y) {
                 elem[x] = if start {
-                    '☆'
+                    'S'
                 } else if end {
-                    '★'
+                    'E'
                 } else {
                     match tile {
-                        Tile::Current => 'D',
+                        Tile::Current => 'C',
                         Tile::Wall => '#',
                         Tile::Visited => '.',
                         _ => ' ',
@@ -138,11 +138,11 @@ impl RepairDroid {
 
                 if let Some(elem) = grid.get_mut(y) {
                     elem[x] = if start {
-                        '☆'
+                        'S'
                     } else if end {
-                        '★'
+                        'E'
                     } else {
-                        'x'
+                        ' '
                     };
                 }
             }

@@ -230,3 +230,19 @@ pub fn exec(memory: Vec<i64>, output: Option<Vec<i64>>) -> i64 {
 
     handle.join().unwrap()
 }
+
+pub fn run<F: Send + Sync + 'static, T: Send + Sync + 'static>(input: &Vec<i64>, fun: F) -> T
+where
+    F: Fn(Receiver<i64>, Sender<i64>) -> T,
+{
+    let (b_sender, a_receiver) = channel();
+    let (a_sender, b_receiver) = channel();
+
+    let mut program = Program::new(input);
+
+    program.new_input(b_receiver);
+    program.new_output(b_sender);
+
+    spawn(move || program.run());
+    spawn(move || fun(a_receiver, a_sender)).join().unwrap()
+}
