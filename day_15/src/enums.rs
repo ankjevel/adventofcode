@@ -10,7 +10,6 @@ use Direction::{Down, Left, Right, Up};
 
 impl Direction {
     pub fn new(input: i64) -> Direction {
-        println!("input: {:>}", input);
         match input {
             1 => Up,
             2 => Down,

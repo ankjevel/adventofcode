@@ -16,21 +16,60 @@ fn is_between(a: &Point, c: &Point, b: &Point) -> bool {
     )
 }
 
+#[derive(Clone, Copy, Eq, PartialEq, Hash, Debug, Ord, PartialOrd)]
+struct State {
+    cost: isize,
+    point: Point,
+}
+
 type Map = HashMap<Point, Tile>;
 
 pub fn best_match(input: &Map, position: &Point, visited: &Vec<Point>) -> Option<Vec<Point>> {
-    let available = input
-        .clone()
-        .iter()
-        .filter(|(pos, tile)| {
-            (tile == &&Tile::Unknown || tile == &&Tile::Visited) && !visited.contains(pos)
-        })
-        .map(|(pos, _tile)| pos.to_owned())
-        .collect::<Vec<Point>>();
+    let within_range = || -> Option<Vec<Point>> {
+        let get_closest = |range: usize| -> Option<Vec<Point>> {
+            let input = input
+                .clone()
+                .iter()
+                .filter(|(pos, tile)| {
+                    (tile == &&Tile::Unknown || tile == &&Tile::Visited) && !visited.contains(pos)
+                })
+                .filter(|(pos, _title)| {
+                    let x = ((position.0 as f64) - (pos.0 as f64)).abs() as usize;
+                    let y = ((position.1 as f64) - (pos.1 as f64)).abs() as usize;
 
-    if available.len() <= 0 {
-        return None;
-    }
+                    x <= range && y <= range
+                })
+                .map(|(pos, _tile)| pos.to_owned())
+                .collect::<Vec<Point>>();
+
+            if input.len() <= 0 {
+                None
+            } else {
+                Some(input.to_owned())
+            }
+        };
+
+        let mut range = 0;
+        let mut result = None;
+
+        loop {
+            if let Some(res) = get_closest(range) {
+                result = Some(res);
+                break;
+            }
+            range += 1;
+            if range >= input.len() {
+                break;
+            }
+        }
+
+        result
+    };
+
+    let available = match within_range() {
+        Some(res) => res.to_owned(),
+        None => return None,
+    };
 
     let mut steps = vec![];
 
@@ -40,7 +79,7 @@ pub fn best_match(input: &Map, position: &Point, visited: &Vec<Point>) -> Option
             None => continue,
         };
 
-        if path.len() < steps.len() {
+        if steps.len() == 0 || path.len() < steps.len() {
             steps = path.to_owned();
         }
     }
@@ -50,12 +89,6 @@ pub fn best_match(input: &Map, position: &Point, visited: &Vec<Point>) -> Option
     } else {
         Some(steps.to_owned())
     }
-}
-
-#[derive(Clone, Copy, Eq, PartialEq, Hash, Debug, Ord, PartialOrd)]
-struct State {
-    cost: isize,
-    point: Point,
 }
 
 pub fn find_path(map: &Map, start: Point, goal: Point) -> Option<Vec<Point>> {
@@ -123,4 +156,49 @@ pub fn find_path(map: &Map, start: Point, goal: Point) -> Option<Vec<Point>> {
     }
 
     Some(path)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_goes_around_the_maze() {
+        let mut map = HashMap::new();
+
+        let c = Tile::Current;
+        let v = Tile::Visited;
+        let w = Tile::Wall;
+
+        let positions = vec![
+            vec![w, w, w, w, w], // [(0,0), (1,0), (2,0), (3,0), (4,0)]
+            vec![w, v, v, v, w], // [(0,1), (1,1), (2,1), (3,1), (4,1)]
+            vec![w, v, w, c, w], // [(0,2), (1,2), (2,2), (3,2), (4,2)]
+            vec![w, v, w, w, w], // [(0,3), (1,3), (2,3), (3,3), (4,3)]
+            vec![w, v, v, v, w], // [(0,4), (1,4), (2,4), (3,4), (4,4)]
+            vec![w, w, w, w, w], // [(0,5), (1,5), (2,5), (3,5), (4,5)]
+        ];
+
+        for (y, row) in positions.iter().enumerate() {
+            for (x, tile) in row.iter().enumerate() {
+                let (x, y) = (x.to_owned() as i64, y.to_owned() as i64);
+                map.insert((x, y), tile.to_owned());
+            }
+        }
+
+        assert_eq!(
+            find_path(&map, (3, 2), (3, 4)),
+            Some(vec![
+                (3, 4),
+                (2, 4),
+                (1, 4),
+                (1, 3),
+                (1, 2),
+                (1, 1),
+                (2, 1),
+                (3, 1),
+                (3, 2)
+            ])
+        );
+    }
 }

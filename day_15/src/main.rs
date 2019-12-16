@@ -8,7 +8,7 @@ fn main() {
     println!("{:?}", part_01(&input));
 }
 
-fn part_01(input: &Vec<i64>) {
+fn part_01(input: &Vec<i64>) -> usize {
     let (b_sender, a_receiver) = channel();
     let (a_sender, b_receiver) = channel();
 

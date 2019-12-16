@@ -22,6 +22,8 @@ pub struct RepairDroid {
     input: Receiver<i64>,
     output: Sender<i64>,
     grid: HashMap<Point, Tile>,
+    end: Option<Point>,
+    end_route: Option<Vec<Point>>,
     position: Point,
     direction: Direction,
     iterations: u64,
@@ -49,6 +51,8 @@ impl RepairDroid {
             visited: vec![(0, -1)],
             direction: Up,
             iterations: 0,
+            end: None,
+            end_route: None,
         }
     }
 
@@ -102,16 +106,45 @@ impl RepairDroid {
                 continue;
             }
 
+            let start = x == 0 && y == 0;
+            let end = !self.end.is_none() && self.end.unwrap() == (x, y);
+
             let x = (x + x_padding) as usize;
             let y = (y + y_padding) as usize;
 
             if let Some(elem) = grid.get_mut(y) {
-                elem[x] = match tile {
-                    Tile::Current => 'D',
-                    Tile::Wall => '#',
-                    Tile::Visited => '.',
-                    _ => ' ',
+                elem[x] = if start {
+                    '☆'
+                } else if end {
+                    '★'
+                } else {
+                    match tile {
+                        Tile::Current => 'D',
+                        Tile::Wall => '#',
+                        Tile::Visited => '.',
+                        _ => ' ',
+                    }
                 };
+            }
+        }
+
+        if let Some(vec) = &self.end_route {
+            for (x, y) in vec {
+                let (x, y) = (x.to_owned(), y.to_owned());
+                let start = x == 0 && y == 0;
+                let end = self.end.unwrap() == (x, y);
+                let x = (x + x_padding) as usize;
+                let y = (y + y_padding) as usize;
+
+                if let Some(elem) = grid.get_mut(y) {
+                    elem[x] = if start {
+                        '☆'
+                    } else if end {
+                        '★'
+                    } else {
+                        'x'
+                    };
+                }
             }
         }
 
@@ -129,6 +162,7 @@ impl RepairDroid {
                 if x == &self.position.0 && y == &self.position.1 {
                     continue;
                 }
+
                 let direction = if x == &prev.0 {
                     if y < &prev.1 {
                         Up
@@ -190,7 +224,7 @@ impl RepairDroid {
         Direction::dir(self.direction)
     }
 
-    fn move_droid(&mut self) -> Status {
+    fn move_droid(&mut self) -> bool {
         let next_direction = self.next_direction();
 
         self.output.send(next_direction.to_owned()).unwrap();
@@ -199,6 +233,10 @@ impl RepairDroid {
             Ok(curr) => Status::new(curr),
             Err(error) => panic!("error: {}", error),
         };
+
+        if status == MovedAndOnOxygen {
+            self.end = Some(self.position.clone());
+        }
 
         match status {
             Wall => {
@@ -210,7 +248,6 @@ impl RepairDroid {
                 self.grid.insert(self.position.clone(), Tile::Visited);
                 self.position = self.get_position(self.direction);
                 self.grid.insert(self.position.clone(), Tile::Current);
-
                 vec![(0, 1), (1, 0), (-1, 0), (0, -1)]
                     .iter()
                     .for_each(|(x, y)| {
@@ -228,14 +265,30 @@ impl RepairDroid {
             }
         };
 
-        status
+        let unknown_left = self.grid.iter().fold(0, |acc, curr| {
+            if curr.1 == &Tile::Unknown {
+                acc + 1
+            } else {
+                acc
+            }
+        });
+
+        unknown_left == 0
     }
 
-    pub fn run(&mut self) {
-        while self.move_droid() != MovedAndOnOxygen {
-            sleep(Duration::from_millis(60));
+    pub fn run(&mut self) -> usize {
+        while !self.move_droid() {
+            sleep(Duration::from_millis(10));
             self.iterations += 1;
             self.print();
+        }
+
+        if let Some(result) = paths::find_path(&self.grid.to_owned(), (0, 0), self.end.unwrap()) {
+            self.end_route = Some(result.to_owned());
+            self.print();
+            result.len()
+        } else {
+            0
         }
     }
 }
