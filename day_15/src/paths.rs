@@ -39,7 +39,8 @@ pub fn best_match(input: &Map, position: &Point, visited: &Vec<Point>) -> Option
             Some(path) => path.to_owned(),
             None => continue,
         };
-        if path.len() > steps.len() {
+
+        if path.len() < steps.len() {
             steps = path.to_owned();
         }
     }
