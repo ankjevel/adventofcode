@@ -63,4 +63,15 @@ pub enum Tile {
     Unknown,
     Wall,
     Visited,
+    Oxygen,
+}
+
+impl Tile {
+    pub fn new(input: &str) -> Tile {
+        match input {
+            "0" => Tile::Wall,
+            "1" => Tile::Visited,
+            _ => Tile::Oxygen,
+        }
+    }
 }

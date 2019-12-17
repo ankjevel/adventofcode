@@ -165,20 +165,6 @@ impl Program {
         2
     }
 
-    pub fn run(&mut self) -> i64 {
-        self.pointer = 0;
-        self.output_value = 0;
-        self.halted = false;
-        self.memory = self.original_memory.clone();
-        self.relative_base = 0;
-
-        while !self.halted {
-            self.eval();
-        }
-
-        self.output_value.to_owned()
-    }
-
     fn eval(&mut self) {
         let string = self.memory[self.pointer].to_string();
         let mut instuction = string.chars().rev();
@@ -206,19 +192,29 @@ impl Program {
 
         self.pointer = ((self.pointer as i64) + next) as usize;
     }
+
+    pub fn run(&mut self) -> i64 {
+        self.pointer = 0;
+        self.output_value = 0;
+        self.halted = false;
+        self.memory = self.original_memory.clone();
+        self.relative_base = 0;
+
+        while !self.halted {
+            self.eval();
+        }
+
+        self.output_value.to_owned()
+    }
 }
 
 pub fn exec(memory: Vec<i64>, output: Option<Vec<i64>>) -> i64 {
     let (program_sender, _exec_reciever) = channel();
     let (exec_sender, program_receiver) = channel();
 
-    match output {
-        Some(vec) => {
-            vec.into_iter().for_each(|val| {
-                exec_sender.send(val).unwrap();
-            });
-        }
-        None => {}
+    if let Some(vec) = output {
+        vec.into_iter()
+            .for_each(|val| exec_sender.send(val).unwrap())
     };
 
     let handle = spawn(move || {

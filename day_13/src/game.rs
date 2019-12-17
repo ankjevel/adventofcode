@@ -2,6 +2,7 @@ use crate::Tile::{self, *};
 use std::{
     collections::HashMap,
     sync::mpsc::{Receiver, Sender},
+    thread::sleep,
     time::Duration,
 };
 use termion::{clear::All, cursor::Restore};
@@ -85,8 +86,8 @@ impl Game {
 
             if let Some(elem) = grid.get_mut(y) {
                 elem[x] = match tile {
-                    Wall => '#',
-                    Block => '◻',
+                    Wall => '░',
+                    Block => '▓',
                     HorizontalPaddle => '=',
                     Ball => 'o',
                     _ => ' ',
@@ -169,7 +170,7 @@ impl Game {
         'main_loop: loop {
             let mut current_input = vec![];
             'collect_loop: loop {
-                let curr = match self.input.recv_timeout(Duration::from_millis(25)) {
+                let curr = match self.input.recv_timeout(Duration::from_millis(5)) {
                     Ok(x) => x,
                     _ => break 'collect_loop,
                 };
@@ -196,6 +197,7 @@ impl Game {
             };
 
             self.iterations += 1;
+            sleep(Duration::from_millis(50))
         }
 
         self.score.to_owned()

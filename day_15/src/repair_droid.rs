@@ -31,27 +31,59 @@ pub struct RepairDroid {
     visited: Vec<Point>,
 }
 
+fn test() -> Vec<(i64, i64, Tile)> {
+    include_str!("../../input/day_15_part_02")
+        .lines()
+        .map(|string| string.trim())
+        .filter(|string| !string.is_empty())
+        .map(|row| {
+            let mut split = row.split(' ');
+
+            let x = split.next().unwrap();
+            let y = split.next().unwrap();
+            let tile = split.next().unwrap();
+
+            (
+                x.parse::<i64>().unwrap(),
+                y.parse::<i64>().unwrap(),
+                Tile::new(tile),
+            )
+        })
+        .collect()
+}
+
 impl RepairDroid {
     pub fn new(receiver: Receiver<i64>, sender: Sender<i64>) -> RepairDroid {
-        let mut grid = HashMap::new();
-        grid.insert((0, 0), Tile::Current);
+        include_str!("../../input/day_15_part_02");
 
-        vec![(0, 1), (1, 0), (-1, 0), (0, -1)]
-            .iter()
-            .for_each(|pos| {
-                grid.insert(pos.to_owned(), Tile::Unknown);
-            });
+        let mut grid = HashMap::new();
+        // grid.insert((0, 0), Tile::Current);
+
+        for (x, y, tile) in test() {
+            grid.insert((x.to_owned(), y.to_owned()), tile.to_owned());
+        }
+
+        // vec![(0, 1), (1, 0), (-1, 0), (0, -1)]
+        //     .iter()
+        //     .for_each(|pos| {
+        //         grid.insert(pos.to_owned(), Tile::Unknown);
+        //     });
 
         RepairDroid {
             input: receiver,
             output: sender,
             grid,
             position: (0, 0),
-            steps: vec![Up],
-            visited: vec![(0, -1)],
+
+            // steps: vec![Up],
+            // visited: vec![(0, -1)],
+            steps: vec![],
+            visited: vec![],
+
             direction: Up,
-            iterations: 0,
-            end: None,
+            // iterations: 0,
+            iterations: 3536,
+            end: Some((-13, -18)),
             end_route: None,
         }
     }
@@ -88,25 +120,26 @@ impl RepairDroid {
         }
 
         let x_padding = 0 - min_x;
-        let y_padding = 2 - min_y;
+        let y_padding = 0 - min_y;
 
         (max_x + x_padding, x_padding, max_y + y_padding, y_padding)
     }
 
-    fn print(&mut self) {
+    fn print(&mut self, print_oxygen: bool) {
         let (max_x, x_padding, max_y, y_padding) = self.get_grid();
 
         print!("{}{}", All, Restore);
         println!("iterations: {}", self.iterations);
 
-        let mut grid = vec![vec![' '; (max_x + 1) as usize]; (max_y + 1) as usize];
+        let mut grid = vec![vec!['⍰'; (max_x + 1) as usize]; (max_y + 1) as usize];
+        let reached_end = !self.end_route.is_none();
 
         for ((x, y), tile) in self.grid.clone() {
             if tile == Tile::Unknown {
                 continue;
             }
 
-            let start = x == 0 && y == 0;
+            let start = !print_oxygen && x == 0 && y == 0;
             let end = !self.end.is_none() && self.end.unwrap() == (x, y);
 
             let x = (x + x_padding) as usize;
@@ -119,10 +152,17 @@ impl RepairDroid {
                     'E'
                 } else {
                     match tile {
-                        Tile::Current => 'C',
-                        Tile::Wall => '#',
-                        Tile::Visited => '.',
-                        _ => ' ',
+                        Tile::Current => {
+                            if reached_end {
+                                '▓'
+                            } else {
+                                'D'
+                            }
+                        }
+                        Tile::Wall => '░',
+                        Tile::Visited => '▓',
+                        Tile::Oxygen => '▒',
+                        _ => '⍰',
                     }
                 };
             }
@@ -142,7 +182,7 @@ impl RepairDroid {
                     } else if end {
                         'E'
                     } else {
-                        ' '
+                        '▒'
                     };
                 }
             }
@@ -276,19 +316,48 @@ impl RepairDroid {
         unknown_left == 0
     }
 
-    pub fn run(&mut self) -> usize {
-        while !self.move_droid() {
-            sleep(Duration::from_millis(10));
-            self.iterations += 1;
-            self.print();
-        }
-
+    fn part_01(&mut self) {
         if let Some(result) = paths::find_path(&self.grid.to_owned(), (0, 0), self.end.unwrap()) {
             self.end_route = Some(result.to_owned());
-            self.print();
-            result.len()
-        } else {
-            0
+            self.print(false);
+
+            println!("part_01: {}", result.len());
+
+            sleep(Duration::from_secs(10));
         }
+    }
+
+    fn part_02(&mut self) {
+        let oxygen = self.end.unwrap().to_owned();
+        self.position = oxygen.to_owned();
+
+        self.end = None;
+        self.end_route = None;
+
+        self.grid
+            .clone()
+            .into_iter()
+            .filter(|(_pos, tile)| tile != &Tile::Wall && tile != &Tile::Visited)
+            .for_each(|(pos, _tile)| {
+                *self.grid.get_mut(&pos).unwrap() = Tile::Visited;
+            });
+
+        *self.grid.get_mut(&oxygen).unwrap() = Tile::Oxygen;
+
+        self.print(true);
+    }
+
+    pub fn run(&mut self) -> usize {
+        while !self.move_droid() {
+            // sleep(Duration::from_millis(10));
+            self.iterations += 1;
+            self.print(false);
+        }
+
+        self.part_01();
+        sleep(Duration::from_secs(5));
+        self.part_02();
+
+        0
     }
 }
