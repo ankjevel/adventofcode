@@ -1,6 +1,6 @@
 use crate::enums::Tile;
 use crate::Point;
-use std::collections::{BinaryHeap, HashMap};
+use std::collections::{BinaryHeap, HashMap, HashSet};
 
 fn distance(p1: &Point, p2: &Point) -> f64 {
     ((p2.0 as f64 - p1.0 as f64).powf(2f64) + (p2.1 as f64 - p1.1 as f64).powf(2f64)).sqrt()
@@ -91,22 +91,39 @@ pub fn best_match(input: &Map, position: &Point, visited: &Vec<Point>) -> Option
     }
 }
 
-pub fn find_path(map: &Map, start: Point, goal: Point) -> Option<Vec<Point>> {
-    let adjacent = |point: &Point| -> Vec<Point> {
-        let mut vec = Vec::new();
+pub fn adjacent(map: &Map, point: &Point) -> Vec<Point> {
+    let mut vec = Vec::new();
 
+    for (x, y) in vec![(0, 1), (1, 0), (-1, 0), (0, -1)] {
+        let new_pos = (point.0 + x, point.1 + y);
+        if let Some(tile) = map.get(&new_pos) {
+            if tile != &Tile::Wall {
+                vec.push(new_pos.to_owned());
+            }
+        };
+    }
+
+    vec
+}
+
+pub fn find_leafs(map: &Map, current: &Vec<Point>) -> Vec<Point> {
+    let mut new_leafs: HashSet<Point> = HashSet::new();
+
+    for point in current {
         for (x, y) in vec![(0, 1), (1, 0), (-1, 0), (0, -1)] {
             let new_pos = (point.0 + x, point.1 + y);
             if let Some(tile) = map.get(&new_pos) {
-                if tile != &Tile::Wall {
-                    vec.push(new_pos.to_owned());
+                if tile == &Tile::Visited {
+                    new_leafs.insert(new_pos.to_owned());
                 }
-            };
+            }
         }
+    }
 
-        vec
-    };
+    new_leafs.into_iter().collect::<Vec<Point>>()
+}
 
+pub fn find_path(map: &Map, start: Point, goal: Point) -> Option<Vec<Point>> {
     let can_move = |point: &Point| -> bool {
         match map.get(&point) {
             Some(tile) => tile != &Tile::Wall,
@@ -128,7 +145,7 @@ pub fn find_path(map: &Map, start: Point, goal: Point) -> Option<Vec<Point>> {
         if current.unwrap().point == goal {
             break;
         }
-        for next_point in adjacent(&current.unwrap().point) {
+        for next_point in adjacent(map, &current.unwrap().point) {
             if !came_from.contains_key(&next_point) && can_move(&next_point) {
                 frontier.push(State {
                     point: next_point,

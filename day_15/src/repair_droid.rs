@@ -10,6 +10,7 @@ use rand::{
 };
 use std::{
     collections::HashMap,
+    mem::replace,
     sync::mpsc::{Receiver, Sender},
     thread::sleep,
     time::Duration,
@@ -54,20 +55,20 @@ fn test() -> Vec<(i64, i64, Tile)> {
 
 impl RepairDroid {
     pub fn new(receiver: Receiver<i64>, sender: Sender<i64>) -> RepairDroid {
-        include_str!("../../input/day_15_part_02");
+        // include_str!("../../input/day_15_part_02");
 
         let mut grid = HashMap::new();
-        // grid.insert((0, 0), Tile::Current);
+        grid.insert((0, 0), Tile::Current);
 
-        for (x, y, tile) in test() {
-            grid.insert((x.to_owned(), y.to_owned()), tile.to_owned());
-        }
+        // for (x, y, tile) in test() {
+        //     grid.insert((x.to_owned(), y.to_owned()), tile.to_owned());
+        // }
 
-        // vec![(0, 1), (1, 0), (-1, 0), (0, -1)]
-        //     .iter()
-        //     .for_each(|pos| {
-        //         grid.insert(pos.to_owned(), Tile::Unknown);
-        //     });
+        vec![(0, 1), (1, 0), (-1, 0), (0, -1)]
+            .iter()
+            .for_each(|pos| {
+                grid.insert(pos.to_owned(), Tile::Unknown);
+            });
 
         RepairDroid {
             input: receiver,
@@ -75,15 +76,15 @@ impl RepairDroid {
             grid,
             position: (0, 0),
 
-            // steps: vec![Up],
-            // visited: vec![(0, -1)],
-            steps: vec![],
-            visited: vec![],
-
+            steps: vec![Up],
+            visited: vec![(0, -1)],
+            // steps: vec![],
+            // visited: vec![],
             direction: Up,
-            // iterations: 0,
-            iterations: 3536,
-            end: Some((-13, -18)),
+            iterations: 0,
+            // iterations: 3536,
+            end: None,
+            // end: Some((-13, -18)),
             end_route: None,
         }
     }
@@ -345,17 +346,38 @@ impl RepairDroid {
         *self.grid.get_mut(&oxygen).unwrap() = Tile::Oxygen;
 
         self.print(true);
+
+        let mut leafs = vec![oxygen.to_owned()];
+        self.iterations = 0;
+        loop {
+            self.iterations += 1;
+            let mut new_leafs = paths::find_leafs(&self.grid.to_owned(), &leafs);
+            if new_leafs.len() == 0 {
+                break;
+            }
+
+            for point in &new_leafs {
+                *self.grid.get_mut(&point).unwrap() = Tile::Oxygen;
+            }
+
+            self.print(true);
+
+            sleep(Duration::from_millis(40));
+
+            leafs = replace(&mut new_leafs, vec![]);
+        }
+
+        println!("part_02: {}", self.iterations);
     }
 
     pub fn run(&mut self) -> usize {
         while !self.move_droid() {
-            // sleep(Duration::from_millis(10));
+            sleep(Duration::from_millis(10));
             self.iterations += 1;
             self.print(false);
         }
 
         self.part_01();
-        sleep(Duration::from_secs(5));
         self.part_02();
 
         0
