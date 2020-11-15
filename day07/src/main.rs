@@ -1,52 +1,16 @@
+use ::day07::{part_01::main as part_01, part_02::main as part_02};
 use std::io::Result;
 
-use ::day07::{parse_input, part_01::main as part_01, part_02::main as part_02};
-
 fn main() -> Result<()> {
-    let input = parse_input(include_str!("../../input/day_07"));
+    let input = include_str!("../../input/day_07");
+    let number_of_workers = 5;
+    let duration_per_step = 60;
 
-    println!("part_01: {}", part_01(&input).unwrap());
-    println!("part_02: {:?}", part_02(&input).unwrap());
+    println!("part_01: {}", part_01(input).unwrap());
+    println!(
+        "part_02: {}",
+        part_02(input, number_of_workers, duration_per_step).unwrap()
+    );
 
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use day07::Steps;
-    use std::collections::{HashMap, HashSet};
-
-    fn insert_into(steps: &mut Steps, step: char, required: Vec<char>) {
-        steps.insert(step, required.into_iter().collect::<HashSet<char>>());
-    }
-
-    const EXAMPLE_DATA: &'static str = "
-        Step C must be finished before step A can begin.
-        Step C must be finished before step F can begin.
-        Step A must be finished before step B can begin.
-        Step A must be finished before step D can begin.
-        Step B must be finished before step E can begin.
-        Step D must be finished before step E can begin.
-        Step F must be finished before step E can begin.
-    ";
-
-    #[test]
-    fn it_should_parse_input() {
-        let mut expected: Steps = HashMap::new();
-
-        insert_into(&mut expected, 'C', vec![]);
-        insert_into(&mut expected, 'A', vec!['C']);
-        insert_into(&mut expected, 'B', vec!['A']);
-        insert_into(&mut expected, 'D', vec!['A']);
-        insert_into(&mut expected, 'F', vec!['C']);
-        insert_into(&mut expected, 'E', vec!['B', 'D', 'F']);
-
-        assert_eq!(parse_input(&EXAMPLE_DATA), expected)
-    }
-
-    #[test]
-    fn it_should_get_result_as_example_01() {
-        assert_eq!(part_01(&parse_input(&EXAMPLE_DATA)).unwrap(), "CABDFE")
-    }
 }

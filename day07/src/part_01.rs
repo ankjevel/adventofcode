@@ -1,10 +1,9 @@
+use crate::parse_input;
 use std::io::Result;
 
-use crate::Steps;
-
-pub fn main(input: &Steps) -> Result<String> {
+pub fn main(input: &str) -> Result<String> {
+    let mut steps = parse_input(input.clone());
     let mut output_order = String::new();
-    let mut steps = input.clone();
 
     while !steps.is_empty() {
         let mut available: Vec<char> = steps
@@ -30,4 +29,16 @@ pub fn main(input: &Steps) -> Result<String> {
     }
 
     Ok(output_order)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const EXAMPLE_DATA: &'static str = include_str!("test_fixture.txt");
+
+    #[test]
+    fn it_should_get_result_as_example_01() {
+        assert_eq!(main(EXAMPLE_DATA).unwrap(), "CABDFE")
+    }
 }
