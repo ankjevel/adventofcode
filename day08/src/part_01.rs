@@ -1,7 +1,7 @@
 use crate::parse_input;
 use std::io::Result;
 
-fn query_children(entries: &mut Vec<u8>, result_metadata_entries: &mut Vec<Vec<usize>>) {
+fn query_children(entries: &mut Vec<u32>, result_metadata_entries: &mut Vec<Vec<u32>>) {
     let number_of_child_nodes = entries.remove(0);
     let number_of_metadata_entries = entries.remove(0);
 
@@ -9,32 +9,28 @@ fn query_children(entries: &mut Vec<u8>, result_metadata_entries: &mut Vec<Vec<u
         query_children(entries, result_metadata_entries);
     }
 
-    let mut metadata_entries: Vec<usize> = Vec::new();
+    let mut metadata_entries = Vec::new();
     for _ in 0..number_of_metadata_entries {
-        let entry = entries.remove(0) as usize;
-        metadata_entries.push(entry);
+        metadata_entries.push(entries.remove(0));
     }
 
     result_metadata_entries.push(metadata_entries);
 }
 
-pub fn main(input: &str) -> Result<usize> {
-    let parsed = parse_input(input.clone());
-    let mut metadata_entries: Vec<Vec<usize>> = Vec::new();
+pub fn main(input: &str) -> Result<u32> {
+    let parsed = parse_input(input);
+    let mut metadata_entries = Vec::new();
 
     query_children(&mut parsed.clone(), &mut metadata_entries);
 
-    Ok(metadata_entries
-        .iter()
-        .flatten()
-        .fold(0, |acc, curr| acc + curr))
+    Ok(metadata_entries.iter().flatten().sum())
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    const EXAMPLE_DATA: &'static str = include_str!("test_fixture_1.txt");
+    const EXAMPLE_DATA: &'static str = include_str!("test_fixture.txt");
 
     #[test]
     fn it_should_get_the_same_answer_as_part_example() {
