@@ -46,7 +46,7 @@ pub fn main(points: &Vec<Point>) -> io::Result<u32> {
                 let mut new_boundary = HashSet::new();
 
                 for b in boundary {
-                    let mut state = grid.entry(b).or_insert(State::Empty);
+                    let state = grid.entry(b).or_insert(State::Empty);
 
                     match state {
                         State::Empty => *state = State::Claim(point),

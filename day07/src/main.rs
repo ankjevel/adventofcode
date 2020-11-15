@@ -1,18 +1,6 @@
-#[macro_use]
-extern crate lazy_static;
-extern crate regex;
-
-mod part_01;
-mod part_02;
-
-use regex::{Captures, Regex};
-use std::collections::{HashMap, HashSet};
 use std::io::Result;
 
-use part_01::main as part_01;
-use part_02::main as part_02;
-
-type Steps = HashMap<char, HashSet<char>>;
+use ::day07::{parse_input, part_01::main as part_01, part_02::main as part_02};
 
 fn main() -> Result<()> {
     let input = parse_input(include_str!("../../input/day_07"));
@@ -23,41 +11,11 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn parse_input(string: &str) -> Steps {
-    fn to_char(input: &Captures, index: usize) -> char {
-        input.get(index).unwrap().as_str().chars().next().unwrap()
-    }
-
-    lazy_static! {
-        static ref RE: Regex = Regex::new(r"Step (\w) .*? step (\w)").unwrap();
-    }
-
-    let mut steps: Steps = HashMap::new();
-
-    string
-        .lines()
-        .map(|string| string.trim())
-        .filter(|string| !string.is_empty())
-        .for_each(|string| {
-            if !RE.is_match(&string) {
-                panic!("none matching for {}", string);
-            }
-
-            let cap = RE.captures(&string).unwrap();
-            let required = to_char(&cap, 1);
-            let step = to_char(&cap, 2);
-
-            steps.entry(required).or_insert(HashSet::new());
-            steps.entry(step).or_insert(HashSet::new());
-            steps.get_mut(&step).unwrap().insert(required);
-        });
-
-    steps
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use day07::Steps;
+    use std::collections::{HashMap, HashSet};
 
     fn insert_into(steps: &mut Steps, step: char, required: Vec<char>) {
         steps.insert(step, required.into_iter().collect::<HashSet<char>>());

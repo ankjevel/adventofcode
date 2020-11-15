@@ -1,6 +1,6 @@
 use std::io::Result;
 
-use Steps;
+use crate::Steps;
 
 pub fn main(_input: &Steps) -> Result<()> {
     Ok(())

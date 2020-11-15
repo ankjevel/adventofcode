@@ -1,6 +1,6 @@
 use std::io::Result;
 
-use Steps;
+use crate::Steps;
 
 pub fn main(input: &Steps) -> Result<String> {
     let mut output_order = String::new();
