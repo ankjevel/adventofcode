@@ -51,13 +51,16 @@ impl Board {
         }
     }
 
-    pub fn run(&mut self) {
+    pub fn run(&mut self) -> u32 {
+        let mut seconds = 0;
+
         loop {
             let new_points = self.move_points();
             let new_size = self.size(&new_points);
             let old_size = self.size(&self.points);
 
             if new_size <= old_size {
+                seconds += 1;
                 let _ = std::mem::replace(&mut self.points, new_points);
                 continue;
             }
@@ -65,6 +68,8 @@ impl Board {
             self.draw();
             break;
         }
+
+        seconds
     }
 
     fn size(&self, points: &Vec<Point>) -> isize {
@@ -97,5 +102,10 @@ mod tests {
     #[test]
     fn it_can_draw_the_example_result() {
         Board::new(&parse_input(&EXAMPLE_DATA)).run();
+    }
+
+    #[test]
+    fn it_gets_the_seconds_it_takes_to_complete_correct() {
+        assert_eq!(Board::new(&parse_input(&EXAMPLE_DATA)).run(), 3);
     }
 }
