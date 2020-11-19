@@ -1,5 +1,6 @@
 pub mod grid;
 pub mod part_01;
+pub mod part_02;
 
 pub fn parse_input(string: &str) -> u16 {
     string

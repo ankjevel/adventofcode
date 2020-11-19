@@ -104,20 +104,4 @@ mod test {
             assert_eq!(power_source.0, (x.to_owned(), y.to_owned()));
         }
     }
-
-    #[test]
-    fn it_gets_the_field_with_highest_power_level() {
-        let (x, y) = (33, 45);
-        let grid_serial_number = 18;
-        let power_level = 29;
-
-        let mut grid = Grid::new(&grid_serial_number);
-
-        grid.generate();
-
-        let power_source = grid.find_largest_power_source();
-
-        assert_eq!(power_source.1, power_level.to_owned() as i32);
-        assert_eq!(power_source.0, (x.to_owned(), y.to_owned()));
-    }
 }
