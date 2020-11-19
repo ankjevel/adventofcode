@@ -47,7 +47,7 @@ fn to_claims(string: String) -> io::Result<Vec<Claim>> {
 }
 
 pub fn input() -> io::Result<Vec<Claim>> {
-    let input_file = try!(File::open("../input/day_03"));
+    let input_file = File::open("../input/day_03")?;
     let mut file = BufReader::new(&input_file);
     let mut contents = String::new();
 

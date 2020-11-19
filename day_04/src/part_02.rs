@@ -8,8 +8,8 @@ pub fn main(records: &Vec<Record>) -> io::Result<u32> {
     let mut guards = guards(&records).unwrap();
 
     guards.sort_unstable_by(|a, b| {
-        let a_max = a.minutes_slept.into_iter().max().unwrap();
-        let b_max = b.minutes_slept.into_iter().max().unwrap();
+        let a_max = a.minutes_slept.iter().max().unwrap();
+        let b_max = b.minutes_slept.iter().max().unwrap();
         a_max.cmp(b_max)
     });
 
@@ -17,7 +17,7 @@ pub fn main(records: &Vec<Record>) -> io::Result<u32> {
 
     let (minute, _) = selected_guard
         .minutes_slept
-        .into_iter()
+        .iter()
         .enumerate()
         .max_by_key(|(_i, minute)| *minute)
         .unwrap();

@@ -19,7 +19,7 @@ fn compare_chars(a: Vec<char>, b: Vec<char>) -> Diff {
 }
 
 pub fn main(rows: Vec<Vec<char>>) -> io::Result<String> {
-    'main_loop: for a in rows.iter() {
+    for a in rows.iter() {
         for b in rows.iter() {
             let (chars, differ) = compare_chars(a.to_vec(), b.to_vec());
             if differ == 1 {

@@ -13,7 +13,7 @@ pub fn main(records: &Vec<Record>) -> io::Result<u32> {
 
     let (minute, _) = selected_guard
         .minutes_slept
-        .into_iter()
+        .iter()
         .enumerate()
         .max_by_key(|(_i, minute)| *minute)
         .unwrap();

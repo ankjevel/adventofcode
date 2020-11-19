@@ -10,7 +10,7 @@ mod part_01;
 mod part_02;
 
 pub fn input() -> io::Result<Vec<Vec<char>>> {
-    let input_file = try!(File::open("../input/day_02"));
+    let input_file = File::open("../input/day_02")?;
     let file = io::BufReader::new(&input_file);
 
     let mut rows = vec![];

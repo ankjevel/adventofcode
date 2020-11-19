@@ -6,7 +6,7 @@ use std::iter::FromIterator;
 use regex::Regex;
 
 pub fn main() -> io::Result<i32> {
-    let input_file = try!(File::open("../input/day_01"));
+    let input_file = File::open("../input/day_01")?;
     let file = io::BufReader::new(&input_file);
     let mut total = 0;
 
