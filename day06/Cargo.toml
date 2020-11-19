@@ -1,7 +1,0 @@
-[package]
-name = "day06"
-version = "0.1.0"
-authors = ["Dennis Pettersson <dennis.pettersson@iteam.se>"]
-
-[dependencies]
-regex = "1.1.0"

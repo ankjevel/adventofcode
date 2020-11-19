@@ -1,0 +1,8 @@
+[package]
+name = "day_03"
+version = "0.1.0"
+authors = ["Dennis Pettersson <mail@dennispettersson.se>"]
+
+[dependencies]
+colored = "1.6"
+regex = "1.1.0"
