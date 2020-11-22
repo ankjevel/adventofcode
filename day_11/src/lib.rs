@@ -1,4 +1,5 @@
 pub mod grid;
+pub mod iterate_x_y;
 pub mod part_01;
 pub mod part_02;
 

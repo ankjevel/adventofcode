@@ -13,7 +13,7 @@
 - [Day 8](https://github.com/ankjevel/adventofcode/tree/2018/day_08) 🌟 🌟
 - [Day 9](https://github.com/ankjevel/adventofcode/tree/2018/day_09) 🌟 🌟
 - [Day 10](https://github.com/ankjevel/adventofcode/tree/2018/day_10) 🌟 🌟
-- [Day 11](https://github.com/ankjevel/adventofcode/tree/2018/day_11) 🌟
+- [Day 11](https://github.com/ankjevel/adventofcode/tree/2018/day_11) 🌟 🌟
 - [Day 12](#)
 - [Day 13](#)
 - [Day 14](#)
