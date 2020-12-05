@@ -16,5 +16,14 @@
 - [Day 11](https://github.com/ankjevel/adventofcode/tree/2019/day_11) 🌟 🌟
 - [Day 12](https://github.com/ankjevel/adventofcode/tree/2019/day_12) 🌟 🌟
 - [Day 13](https://github.com/ankjevel/adventofcode/tree/2019/day_13) 🌟 🌟
-- [Day 14](https://github.com/ankjevel/adventofcode/tree/2019/day_14)
-- [Day 15](https://github.com/ankjevel/adventofcode/tree/2019/day_15)
+- [Day 14](https://github.com/ankjevel/adventofcode/tree/2019/day_14) 🌟 🌟
+- [Day 15](https://github.com/ankjevel/adventofcode/tree/2019/day_15) 🌟 🌟
+- [Day 16](#)
+- [Day 17](#)
+- [Day 18](#)
+- [Day 19](#)
+- [Day 20](#)
+- [Day 21](#)
+- [Day 22](#)
+- [Day 23](#)
+- [Day 24](#)
