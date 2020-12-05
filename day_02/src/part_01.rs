@@ -1,20 +1,19 @@
-use crate::Line;
 use std::io::Result;
 
-pub fn main(input: &Vec<Line>) -> Result<u16> {
-    let mut count = 0;
-    for (min, max, char_to_match, password_string) in input {
-        let matches = password_string
-            .chars()
-            .into_iter()
-            .filter(|c| c == char_to_match)
-            .count() as u16;
+use crate::Line;
 
-        if &matches >= min && &matches <= max {
-            count += 1;
-        }
-    }
-    Ok(count)
+pub fn main(input: &Vec<Line>) -> Result<usize> {
+    Ok(input
+        .into_iter()
+        .filter(|(min, max, char_to_match, password_string)| {
+            let matches = password_string
+                .chars()
+                .into_iter()
+                .filter(|c| c == char_to_match)
+                .count() as u16;
+            &matches >= min && &matches <= max
+        })
+        .count())
 }
 
 #[cfg(test)]
