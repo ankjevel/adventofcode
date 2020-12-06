@@ -1,8 +1,8 @@
 use std::io::Result;
 
-use crate::Line;
+use crate::Input;
 
-pub fn main(input: &Vec<Line>) -> Result<usize> {
+pub fn main(input: &Input) -> Result<usize> {
     Ok(input
         .into_iter()
         .filter(|(min, max, char_to_match, password_string)| {
@@ -18,8 +18,9 @@ pub fn main(input: &Vec<Line>) -> Result<usize> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::parse_input;
+
+    use super::*;
 
     const EXAMPLE_DATA: &'static str = "
         1-3 a: abcde
@@ -28,7 +29,8 @@ mod tests {
     ";
 
     #[test]
-    fn it_gets_the_example_correct() {
-        assert_eq!(main(&parse_input(EXAMPLE_DATA)).unwrap(), 2)
+    fn it_gets_the_example_correct() -> Result<()> {
+        assert_eq!(main(&parse_input(EXAMPLE_DATA))?, 2);
+        Ok(())
     }
 }

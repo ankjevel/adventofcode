@@ -6,7 +6,7 @@ pub type Input = Vec<Vec<String>>;
 pub fn parse_input(input: &str) -> Input {
     input
         .lines()
-        .map(|string| string.trim())
+        .map(str::trim)
         .into_iter()
         .fold(vec![vec![]], |mut list, string| {
             if string.is_empty() {

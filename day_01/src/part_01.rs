@@ -1,6 +1,8 @@
 use std::io::Result;
 
-pub fn main(input: &Vec<u32>) -> Result<u32> {
+use crate::Input;
+
+pub fn main(input: &Input) -> Result<u32> {
     let mut entries = (0, 0);
     'outer: for a in input {
         for b in input.into_iter() {
@@ -16,8 +18,9 @@ pub fn main(input: &Vec<u32>) -> Result<u32> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use crate::parse_input;
+
+    use super::*;
 
     const EXAMPLE_DATA: &'static str = "
         1721
@@ -29,7 +32,8 @@ mod tests {
     ";
 
     #[test]
-    fn it_gets_the_example_correct() {
-        assert_eq!(main(&parse_input(EXAMPLE_DATA)).unwrap(), 514579)
+    fn it_gets_the_example_correct() -> Result<()> {
+        assert_eq!(main(&parse_input(EXAMPLE_DATA))?, 514579);
+        Ok(())
     }
 }

@@ -1,9 +1,9 @@
 pub mod part_01;
 pub mod part_02;
 
-pub type Line = (u16, u16, char, String);
+pub type Input = Vec<(u16, u16, char, String)>;
 
-pub fn parse_input(input: &str) -> Vec<Line> {
+pub fn parse_input(input: &str) -> Input {
     input
         .lines()
         .map(str::trim)

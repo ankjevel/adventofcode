@@ -4,8 +4,11 @@ extern crate regex;
 
 pub mod part_01;
 pub mod part_02;
+pub mod passport;
 
-pub fn parse_input(input: &str) -> Vec<Vec<(String, String)>> {
+pub type Input = Vec<Vec<(String, String)>>;
+
+pub fn parse_input(input: &str) -> Input {
     input
         .lines()
         .map(|string| string.trim())

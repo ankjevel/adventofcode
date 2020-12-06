@@ -1,8 +1,8 @@
 use std::io::Result;
 
-use crate::Line;
+use crate::Input;
 
-pub fn main(input: &Vec<Line>) -> Result<usize> {
+pub fn main(input: &Input) -> Result<usize> {
     Ok(input
         .into_iter()
         .filter(
@@ -34,7 +34,8 @@ mod tests {
     ";
 
     #[test]
-    fn it_gets_the_example_correct() {
-        assert_eq!(main(&parse_input(EXAMPLE_DATA)).unwrap(), 1)
+    fn it_gets_the_example_correct() -> Result<()> {
+        assert_eq!(main(&parse_input(EXAMPLE_DATA))?, 1);
+        Ok(())
     }
 }

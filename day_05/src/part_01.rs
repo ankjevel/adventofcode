@@ -56,12 +56,14 @@ mod tests {
     ";
 
     #[test]
-    fn it_gets_the_first_example_correct() {
-        assert_eq!(main(&vec!["FBFBBFFRLR".to_string()]).unwrap(), 357);
+    fn it_gets_the_first_example_correct() -> Result<()> {
+        assert_eq!(main(&vec!["FBFBBFFRLR".to_string()])?, 357);
+        Ok(())
     }
 
     #[test]
-    fn it_gets_the_example_correct() {
-        assert_eq!(main(&parse_input(&EXAMPLE_DATA)).unwrap(), 820);
+    fn it_gets_the_example_correct() -> Result<()> {
+        assert_eq!(main(&parse_input(&EXAMPLE_DATA))?, 820);
+        Ok(())
     }
 }

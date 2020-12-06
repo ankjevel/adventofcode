@@ -1,6 +1,8 @@
 use std::{collections::HashMap, io::Result};
 
-pub fn main(input: &Vec<Vec<(String, String)>>) -> Result<usize> {
+use crate::{passport::Passport, Input};
+
+pub fn main(input: &Input) -> Result<usize> {
     Ok(input
         .iter()
         .map(|row| {
@@ -17,7 +19,7 @@ pub fn main(input: &Vec<Vec<(String, String)>>) -> Result<usize> {
                 passport.keys().len() == 7 && passport.contains_key("cid") == false
             }
         })
-        .collect::<Vec<HashMap<String, String>>>()
+        .collect::<Vec<Passport>>()
         .len())
 }
 
@@ -25,7 +27,7 @@ pub fn main(input: &Vec<Vec<(String, String)>>) -> Result<usize> {
 mod tests {
     use crate::parse_input;
 
-    use super::main;
+    use super::*;
 
     const EXAMPLE_DATA: &'static str = "
         ecl:gry pid:860033327 eyr:2020 hcl:#fffffd
@@ -44,7 +46,8 @@ mod tests {
     ";
 
     #[test]
-    fn should_get_the_same_amount_of_valid_passports_as_example() {
-        assert_eq!(main(&parse_input(&EXAMPLE_DATA)).unwrap(), 2);
+    fn should_get_the_same_amount_of_valid_passports_as_example() -> Result<()> {
+        assert_eq!(main(&parse_input(&EXAMPLE_DATA))?, 2);
+        Ok(())
     }
 }

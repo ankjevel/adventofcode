@@ -1,8 +1,8 @@
 use std::io::Result;
 
-use crate::{Square, Square::Tree};
+use crate::{Input, Square::Tree};
 
-pub fn main(input: &Vec<Vec<Square>>) -> Result<usize> {
+pub fn main(input: &Input) -> Result<usize> {
     let max = input.get(0).unwrap().len();
     Ok(vec![(1, 1), (3, 1), (5, 1), (7, 1), (1, 2)]
         .into_iter()
@@ -25,7 +25,7 @@ pub fn main(input: &Vec<Vec<Square>>) -> Result<usize> {
 mod tests {
     use crate::parse_input;
 
-    use super::main;
+    use super::*;
 
     const EXAMPLE_DATA: &'static str = "
         ..##.......
@@ -42,7 +42,8 @@ mod tests {
     ";
 
     #[test]
-    fn it_gets_the_example_correct() {
-        assert_eq!(main(&parse_input(EXAMPLE_DATA)).unwrap(), 336);
+    fn it_gets_the_example_correct() -> Result<()> {
+        assert_eq!(main(&parse_input(EXAMPLE_DATA))?, 336);
+        Ok(())
     }
 }

@@ -9,10 +9,12 @@ pub enum Square {
 
 use Square::{Open, Tree};
 
-pub fn parse_input(input: &str) -> Vec<Vec<Square>> {
+pub type Input = Vec<Vec<Square>>;
+
+pub fn parse_input(input: &str) -> Input {
     input
         .lines()
-        .map(|string| string.trim())
+        .map(str::trim)
         .filter(|string| !string.is_empty())
         .into_iter()
         .map(|string| {
