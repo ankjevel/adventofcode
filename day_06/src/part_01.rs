@@ -45,7 +45,7 @@ mod tests {
 
     #[test]
     fn it_gets_the_example_correct() -> Result<()> {
-        assert_eq!(main(&parse_input(&EXAMPLE_DATA))?, 21);
+        assert_eq!(main(&parse_input(&EXAMPLE_DATA))?, 11);
         Ok(())
     }
 }
