@@ -36,20 +36,16 @@ impl Program {
             if *visited {
                 break;
             }
+
             let argument = &instruction.argument;
-            let next = next(
-                self.index,
-                if instruction.operation == JMP {
-                    argument
-                } else {
-                    &1
-                },
-            );
-            if instruction.operation == ACC {
+            let operation = instruction.operation;
+
+            if operation == ACC {
                 self.accumulator += argument
             }
+
             *visited = true;
-            self.index = next;
+            self.index = next(self.index, if operation == JMP { argument } else { &1 });
         }
 
         self.accumulator
