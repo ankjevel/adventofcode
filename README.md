@@ -12,7 +12,7 @@
 - [Day 7](https://github.com/ankjevel/adventofcode/tree/2020/day_07) 🌟 🌟
 - [Day 8](https://github.com/ankjevel/adventofcode/tree/2020/day_08) 🌟 🌟
 - [Day 9](https://github.com/ankjevel/adventofcode/tree/2020/day_09) 🌟 🌟
-- [Day 10](#)
+- [Day 10](https://github.com/ankjevel/adventofcode/tree/2020/day_10) 🌟 🌟
 - [Day 11](#)
 - [Day 12](#)
 - [Day 13](#)
