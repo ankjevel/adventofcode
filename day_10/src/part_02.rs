@@ -1,24 +1,40 @@
-use std::io::Result;
+use std::{collections::HashMap, io::Result};
 
 use crate::Input;
 
-fn naive_recursion(jolt: u32, index: usize, adapters: &Vec<u32>) -> u64 {
+fn naive_recursion(
+    jolt: u64,
+    index: usize,
+    adapters: &Vec<u64>,
+    memo: &mut HashMap<u64, u64>,
+) -> u64 {
     let len = adapters.len();
     if len == index {
         return 1;
     }
-    (index..=index + 3)
-        .filter(|i| i < &len && *adapters.get(*i).unwrap() <= jolt + 3)
-        .map(|i| naive_recursion(*adapters.get(i).unwrap(), i + 1, adapters))
-        .sum()
+
+    if let Some(c) = memo.get(&jolt) {
+        return *c;
+    }
+
+    let combinations = (index..=index + 3)
+        .filter(|i| i < &len)
+        .map(|i| (i, *adapters.get(i).unwrap()))
+        .filter(|(_, adapter)| *adapter <= jolt + 3)
+        .map(|(i, adapter)| naive_recursion(adapter, i + 1, adapters, memo))
+        .sum();
+    memo.insert(jolt, combinations);
+    combinations
 }
 
 pub fn main(input: &Input) -> Result<u64> {
-    let mut adapters = input.clone().to_owned();
-    adapters.sort();
-    adapters.push(*adapters.iter().max().unwrap() + 3);
+    let mut adapters: Vec<_> = input.iter().map(|adapter| *adapter as u64).collect();
 
-    Ok(naive_recursion(0, 0, &adapters))
+    adapters.sort();
+    adapters.push(*adapters.last().unwrap() + 3);
+
+    let mut memo = HashMap::new();
+    Ok(naive_recursion(0, 0, &adapters, &mut memo))
 }
 
 #[cfg(test)]
