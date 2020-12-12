@@ -1,4 +1,10 @@
 pub mod action;
+pub mod direction;
+pub mod facing;
+pub mod manhattan;
+pub mod point;
+pub mod ship;
+
 pub mod part_01;
 pub mod part_02;
 
