@@ -20,7 +20,7 @@ pub fn parse_input(input: &str) -> Input {
                 .chars()
                 .enumerate()
                 .map(|(x, position)| ((x, y), Tile::new(&position)))
-                .collect::<Vec<((usize, usize), Tile)>>()
+                .collect::<Vec<_>>()
         })
         .flatten()
         .collect()

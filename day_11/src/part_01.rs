@@ -36,7 +36,7 @@ pub fn main(input: &Input) -> Result<usize> {
             let occupied_seats = occupied_adjacent_seats(&tiles, x, y);
             if current_tile == &Occupied && occupied_seats >= 4 {
                 modified_tiles.insert((x, y), Empty);
-            } else if current_tile != &Occupied && occupied_seats == 0 {
+            } else if current_tile == &Empty && occupied_seats == 0 {
                 modified_tiles.insert((x, y), Occupied);
             }
         });
