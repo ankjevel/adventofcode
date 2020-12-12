@@ -3,8 +3,8 @@ use std::io::Result;
 use crate::{manhattan::manhattan, point::Point, ship::Ship, Input};
 
 pub fn main(input: &Input) -> Result<u64> {
-    let point = Ship::default().follow_instruction(&input);
-    Ok(manhattan(point, Point { x: 0, y: 0 }))
+    let point = Ship::default().follow_instructions(&input);
+    Ok(manhattan(Point { x: 0, y: 0 }, point))
 }
 
 #[cfg(test)]

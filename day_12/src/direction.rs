@@ -11,7 +11,7 @@ pub enum Direction {
 use Direction::*;
 
 impl Direction {
-    pub fn turn(&mut self, action: &Action, turns: u16) {
+    pub fn turn(&mut self, action: &Action, turns: u16) -> Direction {
         for _ in 0..turns {
             *self = match action {
                 Action::Left => match self {
@@ -28,6 +28,7 @@ impl Direction {
                 },
             };
         }
+        self.clone()
     }
 }
 
