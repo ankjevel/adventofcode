@@ -1,6 +1,5 @@
 # Advent of Code 2020
 
-
 ## Progress:
 
 - [Day 1](https://github.com/ankjevel/adventofcode/tree/2020/day_01) 🌟 🌟
@@ -27,3 +26,4 @@
 - [Day 22](#)
 - [Day 23](#)
 - [Day 24](#)
+- [Day 25](#)

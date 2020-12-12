@@ -36,18 +36,21 @@ impl Ship {
         self.point()
     }
 
-    fn turn(&mut self, action: &Action, value: &u16) {
-        let turns = ((*value as f32) / 90.0).floor() as u16;
-        self.facing.turn(action, turns);
+    pub fn follow_waypoint(mut self, input: &Input) -> Point {
+        for (action, value) in input {
+            match action {
+                North | South | East | West => self.move_waypoint(action, value),
+                Left | Right => self.rotate_waypoint(action, value),
+                Forward => self.move_towards_waypoint(value),
+            }
+        }
+        self.point()
     }
 
-    fn forward(&mut self, value: &u16) {
-        let value = value.to_owned() as isize;
-        match self.facing {
-            Direction::Up => self.y -= value,
-            Direction::Left => self.x -= value,
-            Direction::Down => self.y += value,
-            Direction::Right => self.x += value,
+    fn point(self) -> Point {
+        Point {
+            x: self.x,
+            y: self.y,
         }
     }
 
@@ -61,24 +64,6 @@ impl Ship {
         }
     }
 
-    fn point(self) -> Point {
-        Point {
-            x: self.x,
-            y: self.y,
-        }
-    }
-
-    pub fn follow_waypoint(mut self, input: &Input) -> Point {
-        for (action, value) in input {
-            match action {
-                North | South | East | West => self.move_waypoint(action, value),
-                Left | Right => self.rotate_waypoint(action, value),
-                Forward => self.move_towards_waypoint(value),
-            }
-        }
-        self.point()
-    }
-
     fn move_waypoint(&mut self, action: &Action, value: &u16) {
         let value = value.to_owned() as isize;
         match action {
@@ -89,18 +74,33 @@ impl Ship {
         };
     }
 
+    fn turn(&mut self, action: &Action, value: &u16) {
+        let turns = ((*value as f32) / 90.0).floor() as u16;
+        self.facing.turn(action, turns);
+    }
+
     fn rotate_waypoint(&mut self, action: &Action, value: &u16) {
         let degrees = *value;
-        let clockwise = action == &Action::Right;
-
-        let direction = if clockwise { 360 - degrees } else { degrees };
         let (x, y) = (self.waypoint.x, self.waypoint.y);
 
-        self.waypoint = match direction {
+        let clockwise = action == &Action::Right;
+        let degrees = if clockwise { 360 - degrees } else { degrees };
+
+        self.waypoint = match degrees {
             270 => Point { x: -y, y: x },
             180 => Point { x: -x, y: -y },
             90 => Point { x: y, y: -x },
             0 | _ => Point { x, y },
+        }
+    }
+
+    fn forward(&mut self, value: &u16) {
+        let value = value.to_owned() as isize;
+        match self.facing {
+            Direction::Up => self.y -= value,
+            Direction::Left => self.x -= value,
+            Direction::Down => self.y += value,
+            Direction::Right => self.x += value,
         }
     }
 
