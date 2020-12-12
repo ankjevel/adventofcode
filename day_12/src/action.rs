@@ -20,8 +20,7 @@ impl Action {
             'W' => West,
             'L' => Left,
             'R' => Right,
-            'F' => Forward,
-            _ => North,
+            'F' | _ => Forward,
         }
     }
 }
