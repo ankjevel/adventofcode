@@ -16,7 +16,7 @@
 - [Day 12](https://github.com/ankjevel/adventofcode/tree/2020/day_12) 🌟 🌟
 - [Day 13](https://github.com/ankjevel/adventofcode/tree/2020/day_13) 🌟 🌟
 - [Day 14](https://github.com/ankjevel/adventofcode/tree/2020/day_14) 🌟 🌟
-- [Day 15](#)
+- [Day 15](https://github.com/ankjevel/adventofcode/tree/2020/day_15) 🌟 🌟
 - [Day 16](#)
 - [Day 17](#)
 - [Day 18](#)
