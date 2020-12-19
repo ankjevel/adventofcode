@@ -3,7 +3,7 @@ use std::io::Result;
 use crate::{program::Program, Input};
 
 pub fn main(input: &Input) -> Result<u64> {
-    Ok(Program::new().run(input))
+    Ok(Program::new().part_01(input))
 }
 
 #[cfg(test)]

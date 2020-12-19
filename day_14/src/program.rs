@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 use std::collections::HashMap;
 
 use crate::Input;
@@ -21,16 +23,20 @@ impl Program {
         self.memory.values().sum()
     }
 
+    pub fn new() -> Self {
+        Self {
+            ..Program::default()
+        }
+    }
+
     fn get_value(&self, value: &str) -> u64 {
         let value = value.parse::<u64>().unwrap_or(0);
-        let binary_ish = format!("{:0>36b}", value);
-        let mask = self.mask.to_owned();
-        let bin_idx = binary_ish
+        let bin_idx = format!("{:0>36b}", value)
             .chars()
-            .enumerate()
-            .map(|(index, b)| {
+            .zip(self.mask.chars())
+            .map(|(b, mask)| {
                 let b = if b == '0' { 0 } else { 1 };
-                let n = match &mask.chars().nth(index).unwrap() {
+                let n = match mask {
                     '0' => b & 0,
                     '1' => b | 1,
                     _ => b,
@@ -41,13 +47,7 @@ impl Program {
         u64::from_str_radix(&bin_idx, 2).unwrap()
     }
 
-    pub fn new() -> Self {
-        Self {
-            ..Program::default()
-        }
-    }
-
-    pub fn run(&mut self, input: &Input) -> u64 {
+    pub fn part_01(&mut self, input: &Input) -> u64 {
         for (key, value) in input {
             match key {
                 &Mask => {
@@ -59,6 +59,44 @@ impl Program {
             }
         }
 
+        self.sum()
+    }
+
+    fn get_combinations<'a>(&self, index: &usize) -> Vec<usize> {
+        format!("{:0>36b}", index)
+            .chars()
+            .zip(self.mask.chars())
+            .map(|(b, mask)| {
+                let b = if b == '0' { 0 } else { 1 };
+                match mask {
+                    '0' => vec![b],
+                    '1' => vec![1],
+                    _ => vec![0, 1],
+                }
+            })
+            .map(IntoIterator::into_iter)
+            .multi_cartesian_product()
+            .map(|vec| {
+                let string = vec.iter().map(|i| i.to_string()).collect::<String>();
+                usize::from_str_radix(&string, 2).unwrap()
+            })
+            .collect::<Vec<_>>()
+    }
+
+    pub fn part_02(&mut self, input: &Input) -> u64 {
+        for (key, value) in input {
+            match key {
+                &Mask => {
+                    self.mask = value.to_string();
+                }
+                &Mem(index) => {
+                    let value = value.parse::<u64>().unwrap_or(0);
+                    for index in self.get_combinations(&index) {
+                        *self.memory.entry(index).or_insert(0) = value;
+                    }
+                }
+            }
+        }
         self.sum()
     }
 }

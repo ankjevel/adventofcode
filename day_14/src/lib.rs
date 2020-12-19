@@ -1,3 +1,5 @@
+extern crate itertools;
+
 pub mod part_01;
 pub mod part_02;
 pub mod program;
