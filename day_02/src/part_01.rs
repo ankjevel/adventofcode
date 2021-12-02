@@ -3,15 +3,15 @@ use std::io::Result;
 use crate::{Command::*, Input};
 
 pub fn main(input: &Input) -> Result<i32> {
-    let (mut x, mut y) = (0, 0);
+    let (mut horizontal_position, mut depth) = (0, 0);
     for command in input {
         match command {
-            Forward(units) => x += units,
-            Up(units) => y -= units,
-            Down(units) => y += units,
+            Forward(units) => horizontal_position += units,
+            Up(units) => depth -= units,
+            Down(units) => depth += units,
         }
     }
-    Ok(y * x)
+    Ok(horizontal_position * depth)
 }
 
 #[cfg(test)]
