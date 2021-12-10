@@ -1,4 +1,5 @@
 use std::mem;
+pub mod board;
 pub mod part_01;
 pub mod part_02;
 

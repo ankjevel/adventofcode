@@ -1,9 +1,32 @@
-use std::io::Result;
+use std::{io::Result, sync::Mutex};
 
-use crate::Input;
+use crate::{board::Board, Input};
 
-pub fn main(_input: &Input) -> Result<u32> {
-    Ok(0)
+pub fn main(input: &Input) -> Result<u32> {
+    let boards = Mutex::new(
+        input
+            .boards
+            .to_owned()
+            .into_iter()
+            .map(|b| Board::new(&b.to_owned()))
+            .collect::<Vec<Board>>(),
+    );
+
+    let mut result = 0u32;
+
+    'main: for n in &input.numbers {
+        let mutable_boards: &mut Vec<_> = &mut *boards.try_lock().unwrap();
+        for board in mutable_boards {
+            board.new_draw(n);
+
+            if board.completed_row_or_column() {
+                result = board.get_unmarked() * n;
+                break 'main;
+            }
+        }
+    }
+
+    Ok(result)
 }
 
 #[cfg(test)]
