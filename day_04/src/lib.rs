@@ -10,6 +10,7 @@ pub struct Input {
 }
 
 pub fn parse_input(input: &str) -> Input {
+    let input = format!("{}\n\n", input);
     let mut lines = input.lines().map(str::trim).map(str::to_owned).into_iter();
     let mut numbers: Vec<_> = vec![];
 
@@ -62,7 +63,9 @@ mod tests {
 
         22 13 17 11  0
         8  2 23  4 24
-    ";
+        21  9 14 16  7
+        6 10  3 18  5
+        1 12 20 15 19";
 
     #[test]
     fn it_parses_example() {
@@ -70,7 +73,13 @@ mod tests {
             parse_input(&EXAMPLE_DATA),
             Input {
                 numbers: vec![7, 4, 9, 5],
-                boards: vec![vec![vec![22, 13, 17, 11, 0], vec![8, 2, 23, 4, 24]]]
+                boards: vec![vec![
+                    vec![22, 13, 17, 11, 0],
+                    vec![8, 2, 23, 4, 24],
+                    vec![21, 9, 14, 16, 7],
+                    vec![6, 10, 3, 18, 5],
+                    vec![1, 12, 20, 15, 19],
+                ]]
             }
         );
     }

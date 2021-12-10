@@ -8,7 +8,7 @@ pub fn main(input: &Input) -> Result<u32> {
             .boards
             .to_owned()
             .into_iter()
-            .map(|b| Board::new(&b.to_owned()))
+            .map(|b| Board::new(&b))
             .collect::<Vec<Board>>(),
     );
 

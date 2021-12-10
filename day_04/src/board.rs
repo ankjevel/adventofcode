@@ -9,6 +9,7 @@ pub struct N {
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct Board {
     pub values: HashMap<u32, N>,
+    pub completed: bool,
 }
 
 impl Board {
@@ -26,16 +27,16 @@ impl Board {
                 );
             }
         }
-
-        Self { values }
+        Self {
+            values,
+            completed: false,
+        }
     }
 
     pub fn new_draw(&mut self, n: &u32) {
-        if !self.values.contains_key(&n) {
-            return;
+        if self.values.contains_key(&n) {
+            self.values.get_mut(n).unwrap().marked = true;
         }
-
-        self.values.get_mut(n).unwrap().marked = true;
     }
 
     pub fn get_unmarked(&self) -> u32 {
@@ -48,25 +49,24 @@ impl Board {
         sum
     }
 
-    pub fn completed_row_or_column(&self) -> bool {
-        let mut completed_row = vec![0, 0, 0, 0, 0];
-        let mut completed_column = vec![0, 0, 0, 0, 0];
-        for n in self.values.values() {
-            if n.marked {
-                completed_row[n.pos.0] += 1;
-                completed_column[n.pos.1] += 1;
-            }
+    pub fn completed_row_or_column(&mut self) -> bool {
+        if self.completed {
+            return false;
         }
 
-        for row in &completed_row {
-            if row == &5 {
-                return true;
+        let mut completed_row = vec![0, 0, 0, 0, 0];
+        let mut completed_column = vec![0, 0, 0, 0, 0];
+        for n in self.values.values_mut() {
+            if !n.marked {
+                continue;
             }
 
-            for column in &completed_column {
-                if column == &5 {
-                    return true;
-                }
+            let (row, col) = n.pos;
+            completed_row[row] += 1;
+            completed_column[col] += 1;
+            if completed_row[row] == 5 || completed_column[col] == 5 {
+                self.completed = true;
+                return true;
             }
         }
 
