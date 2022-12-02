@@ -5,7 +5,7 @@ use crate::Input;
 pub fn main(input: &Input) -> Result<u32> {
     Ok(input
         .into_iter()
-        .map(|(opponent, elf)| elf.round(opponent))
+        .map(|(opponent, elf)| elf.play(opponent))
         .sum())
 }
 
