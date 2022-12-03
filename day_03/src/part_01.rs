@@ -8,13 +8,12 @@ pub fn main(input: &Input) -> Result<u32> {
         .into_iter()
         .map(|val| {
             let (left, right) = val.split_at(val.len() / 2);
-            let left_chars = left.chars().into_iter();
-            let right_chars = right.chars().into_iter();
-            left_chars
+            let right_chars = right.chars().into_iter().collect::<HashSet<char>>();
+            left.chars()
                 .into_iter()
                 .filter_map(|char| {
-                    if let Some(result) = right_chars.to_owned().find(|r_char| r_char == &char) {
-                        Some(result as u32)
+                    if right_chars.contains(&char) {
+                        Some(char as u32)
                     } else {
                         None
                     }
