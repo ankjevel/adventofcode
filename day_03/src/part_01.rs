@@ -10,24 +10,18 @@ pub fn main(input: &Input) -> Result<u32> {
             let (left, right) = val.split_at(val.len() / 2);
             let left_chars = left.chars().into_iter();
             let right_chars = right.chars().into_iter();
-
-            let mut matched = HashSet::new();
-            for char in left_chars {
-                if let Some(result) = right_chars.to_owned().find(|r_char| r_char == &char) {
-                    matched.insert(result);
-                }
-            }
-
-            matched
+            left_chars
                 .into_iter()
-                .map(|c| {
-                    let n = c as u32;
-                    if n > 90 {
-                        n - 96
+                .filter_map(|char| {
+                    if let Some(result) = right_chars.to_owned().find(|r_char| r_char == &char) {
+                        Some(result as u32)
                     } else {
-                        n - 38
+                        None
                     }
                 })
+                .collect::<HashSet<u32>>()
+                .iter()
+                .map(|n| if n > &90 { n - 96 } else { n - 38 })
                 .sum::<u32>()
         })
         .sum())

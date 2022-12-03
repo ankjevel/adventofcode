@@ -17,23 +17,17 @@ pub fn main(input: &Input) -> Result<u32> {
                 chars[2].to_owned(),
             );
 
-            let mut matched = HashSet::new();
-            for char in n0 {
-                if n1.contains(&char) && n2.contains(&char) {
-                    matched.insert(char);
-                }
-            }
-
-            matched
-                .into_iter()
-                .map(|c| {
-                    let n = c as u32;
-                    if n > 90 {
-                        n - 96
+            n0.into_iter()
+                .filter_map(|char| {
+                    if n1.contains(&char) && n2.contains(&char) {
+                        Some(char as u32)
                     } else {
-                        n - 38
+                        None
                     }
                 })
+                .collect::<HashSet<u32>>()
+                .iter()
+                .map(|n| if n > &90 { n - 96 } else { n - 38 })
                 .sum::<u32>()
         })
         .sum())
