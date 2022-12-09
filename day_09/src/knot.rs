@@ -2,10 +2,12 @@ use std::collections::HashSet;
 
 use crate::direction::Direction::{self, *};
 
+pub type Position = (isize, isize);
+
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Knot {
-    pub position: (isize, isize),
-    pub visited: Vec<(isize, isize)>,
+    pub position: Position,
+    pub visited: Vec<Position>,
 }
 
 impl Knot {
@@ -33,7 +35,7 @@ impl Knot {
         self.visited.push(self.position.to_owned());
     }
 
-    fn diff(&self, reference: &Knot) -> (isize, isize) {
+    fn diff(&self, reference: &Knot) -> Position {
         let horizontal_diff = (self.position.0 - reference.position.0).abs();
         let vertical_diff = (self.position.1 - reference.position.1).abs();
         (horizontal_diff, vertical_diff)
@@ -77,8 +79,7 @@ impl Knot {
     }
 
     pub fn visited(&self) -> usize {
-        let hash_set: HashSet<(isize, isize)> =
-            HashSet::from_iter(self.visited.clone().to_owned().into_iter());
+        let hash_set: HashSet<_> = HashSet::from_iter(self.visited.clone().to_owned().into_iter());
         hash_set.len()
     }
 

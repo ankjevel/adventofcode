@@ -1,40 +1,35 @@
-use std::{collections::LinkedList, io::Result};
+use std::io::Result;
 
 use crate::{knot::Knot, Input};
 
-fn handle_tail(head: &mut Knot, tails: &mut LinkedList<Knot>) {
-    let mut iter = tails.iter_mut();
-    let mut last: Option<&Knot> = None;
-    loop {
-        let current = iter.next();
-        if current.is_none() {
-            break;
-        }
+#[cfg(debug_assertions)]
+use crate::print::{combine_head_and_tails, print_grid};
 
-        let current = current.unwrap();
-
-        if last.is_none() {
-            current.maybe_move(&head);
-        } else {
-            current.maybe_move(last.unwrap());
-        };
-
-        last = Some(current);
+fn handle_tail(head: &mut Knot, tail: &mut Vec<Knot>) {
+    let mut last = head;
+    for current in tail.iter_mut() {
+        current.maybe_move(last);
+        last = current;
     }
 }
 
 pub fn main(input: &Input) -> Result<usize> {
     let mut head = Knot::new();
-    let mut tails: LinkedList<Knot> = LinkedList::from_iter((1..10).map(|_| Knot::new()));
+    let mut tail = (0..=8).map(|_| Knot::new()).collect::<_>();
 
     for (direction, steps) in input.to_owned() {
         for _ in 0..steps {
             head.goto(&direction);
-            handle_tail(&mut head, &mut tails);
+            handle_tail(&mut head, &mut tail);
         }
     }
 
-    Ok(tails.pop_back().unwrap().visited() + 1)
+    let last = &tail[8];
+
+    #[cfg(debug_assertions)]
+    print_grid(&combine_head_and_tails(&head, &tail), &last.visited);
+
+    Ok(last.visited() + 1)
 }
 
 #[cfg(test)]

@@ -3,16 +3,16 @@ use std::io::Result;
 use crate::{knot::Knot, Input};
 
 pub fn main(input: &Input) -> Result<usize> {
-    let mut head_tail = (Knot::new(), Knot::new());
+    let (mut head, mut tail) = (Knot::new(), Knot::new());
 
     for (direction, steps) in input.to_owned() {
         for _ in 0..steps {
-            head_tail.0.goto(&direction);
-            head_tail.1.maybe_move(&head_tail.0);
+            head.goto(&direction);
+            tail.maybe_move(&head);
         }
     }
 
-    Ok(head_tail.1.visited())
+    Ok(tail.visited())
 }
 
 #[cfg(test)]

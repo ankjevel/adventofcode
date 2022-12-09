@@ -15,14 +15,14 @@ pub fn parse_input(input: &str) -> Input {
         .filter(|string| !string.is_empty())
         .map(str::to_owned)
         .map(|row| {
-            let n: Vec<String> = row.split(" ").into_iter().map(str::to_owned).collect::<_>();
+            let n: Vec<_> = row.split(" ").into_iter().map(str::to_owned).collect::<_>();
             let direction = match &*n[0] {
                 "L" => Left,
                 "R" => Right,
                 "U" => Up,
                 _ => Down,
             };
-            let steps = n[1].parse::<usize>().unwrap_or(0);
+            let steps = n[1].parse::<_>().unwrap_or(0);
             (direction, steps)
         })
         .collect()
