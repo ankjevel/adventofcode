@@ -1,9 +1,11 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
+
+use crate::{instruction::Instruction::*, Input};
 
 pub struct CPU {
     cycles: usize,
     strength: i64,
-    pub stack: HashMap<usize, i64>,
+    pub stack: BTreeMap<usize, i64>,
 }
 
 impl CPU {
@@ -11,7 +13,7 @@ impl CPU {
         CPU {
             cycles: 0,
             strength: 1,
-            stack: HashMap::new(),
+            stack: BTreeMap::new(),
         }
     }
 
@@ -20,6 +22,15 @@ impl CPU {
         self.stack.insert(self.cycles, self.strength);
         if let Some(unrapped) = value {
             self.strength += unrapped;
+        }
+    }
+
+    pub fn parse(&mut self, instructions: &Input) {
+        for instruction in instructions.to_owned() {
+            self.store(None);
+            if let AddX(val) = instruction {
+                self.store(Some(val));
+            }
         }
     }
 }

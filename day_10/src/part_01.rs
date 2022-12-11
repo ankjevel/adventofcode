@@ -1,15 +1,10 @@
 use std::io::Result;
 
-use crate::{cpu::CPU, instruction::Instruction::*, Input};
+use crate::{cpu::CPU, Input};
 
 pub fn main(input: &Input) -> Result<i64> {
     let mut cpu = CPU::new();
-    for instruction in input.to_owned() {
-        cpu.store(None);
-        if let AddX(val) = instruction {
-            cpu.store(Some(val));
-        }
-    }
+    cpu.parse(input);
 
     Ok(vec![20, 60, 100, 140, 180, 220]
         .into_iter()
