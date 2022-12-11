@@ -12,11 +12,11 @@ use Operation::*;
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Monkey {
     pub items: VecDeque<i64>,
+    pub divisible_by: i64,
+    pub inspected: i64,
     operation: Operation,
-    divisible_by: i64,
     if_true: isize,
     if_false: isize,
-    pub inspected: i64,
 }
 
 impl Monkey {

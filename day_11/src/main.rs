@@ -6,7 +6,7 @@ fn main() -> Result<()> {
     let input = parse_input(include_str!("../../input/day_11"));
 
     println!("part_01: {:?}", part_01(&input)?);
-    println!("part_02: {:?}", part_02(&input)?);
+    println!("part_02: {:?}", part_02(&input, 10000)?);
 
     Ok(())
 }

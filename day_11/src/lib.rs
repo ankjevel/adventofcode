@@ -1,3 +1,4 @@
+pub mod evaluate;
 pub mod monkey;
 pub mod part_01;
 pub mod part_02;

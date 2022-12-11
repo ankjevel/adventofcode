@@ -1,9 +1,9 @@
 use std::io::Result;
 
-use crate::Input;
+use crate::{evaluate::evaluate, Input};
 
-pub fn main(_input: &Input) -> Result<()> {
-    Ok(())
+pub fn main(input: &Input, iterations: i32) -> Result<i64> {
+    Ok(evaluate(input, iterations, 1))
 }
 
 #[cfg(test)]
@@ -12,13 +12,13 @@ mod tests {
 
     use super::*;
 
-    const EXAMPLE_DATA: &'static str = "
-        example
-    ";
-
     #[test]
     fn it_gets_the_example_correct() -> Result<()> {
-        assert_eq!(main(&parse_input(&EXAMPLE_DATA))?, ());
+        let input = parse_input(include_str!("../../input/day_11_extended_example"));
+        assert_eq!(main(&input, 1)?, 24);
+        assert_eq!(main(&input, 20)?, 10197);
+        assert_eq!(main(&input, 1000)?, 27019168);
+        assert_eq!(main(&input, 2000)?, 108263829);
         Ok(())
     }
 }
