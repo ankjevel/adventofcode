@@ -1,12 +1,12 @@
 use std::io::Result;
 
-use crate::{pathfinding::find_path, Input};
+use crate::{pathfinding::find_path, print::print, Input};
 
 pub fn main(input: &Input) -> Result<usize> {
     let path = find_path(&input.map, input.start, input.end);
+    print(&path, &input.map);
     Ok(path.len())
 }
-
 #[cfg(test)]
 mod tests {
     use crate::parse_input;

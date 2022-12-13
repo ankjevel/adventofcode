@@ -6,6 +6,7 @@ pub mod part_01;
 pub mod part_02;
 pub mod pathfinding;
 pub mod point;
+pub mod print;
 
 type Map = HashMap<Point, char>;
 
@@ -19,13 +20,12 @@ pub struct Grid {
 pub type Input = Grid;
 
 pub fn parse_input(input: &str) -> Input {
-    let mut lines = input
+    let lines = input
         .lines()
         .map(str::trim)
         .filter(|string| !string.is_empty())
         .map(str::to_owned)
         .collect::<Vec<_>>();
-    lines.reverse();
 
     let mut start = Point::new();
     let mut end = Point::new();
