@@ -1,6 +1,6 @@
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 
-use crate::point::Point;
+use crate::{point::Point, Map};
 
 fn join<'a>(a: String, b: String) -> String {
     let (a, b) = (a.to_owned(), b.to_owned());
@@ -25,7 +25,7 @@ fn max(map: &Vec<Point>) -> (usize, usize) {
 }
 
 fn grid_as_tree_map(
-    grid: &HashMap<Point, char>,
+    grid: &Map,
     max_x: &usize,
     max_y: &usize,
     path: &Vec<Point>,
@@ -34,19 +34,30 @@ fn grid_as_tree_map(
     for y in 0..=(max_y + 1) {
         for x in 0..=(max_x + 1) {
             let point = Point { x, y };
-            let key = grid.get(&point).unwrap_or(&' ').to_owned();
-            let key = if path.contains(&point) || key == 'S' {
-                format!("\x1b[93m{}\x1b[0m", key)
+            let key = grid.get(&point).unwrap_or(&(' ' as u32)).to_owned() + 'a' as u32 - 1;
+            let key = if key < 'a' as u32 {
+                'S' as u32
+            } else if key > 'z' as u32 {
+                'E' as u32
             } else {
-                key.to_string()
+                key
             };
-            tree_map.insert(point, key.to_string());
+
+            let key = char::from_u32(key).unwrap_or(' ').to_string();
+            let key = if path.contains(&point) || key == "S" {
+                format!("\x1b[93m{}\x1b[0m", key)
+            } else if key == "E" {
+                " ".to_string()
+            } else {
+                key
+            };
+            tree_map.insert(point, key);
         }
     }
     tree_map
 }
 
-pub fn print(path: &Vec<Point>, map: &HashMap<Point, char>) {
+pub fn print(path: &Vec<Point>, map: &Map) {
     let (max_x, max_y) = max(&path);
 
     let mut current = 0;

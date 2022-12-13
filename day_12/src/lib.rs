@@ -8,7 +8,7 @@ pub mod pathfinding;
 pub mod point;
 pub mod print;
 
-type Map = HashMap<Point, char>;
+pub type Map = HashMap<Point, u32>;
 
 #[derive(Eq, PartialEq, Debug)]
 pub struct Grid {
@@ -30,19 +30,25 @@ pub fn parse_input(input: &str) -> Input {
     let mut start = Point::new();
     let mut end = Point::new();
     let mut map: Map = HashMap::new();
+    let a = 'a' as u32;
+    let z = 'z' as u32;
     for (y, row) in lines.into_iter().enumerate() {
         for (x, tile) in row.chars().enumerate() {
             let point = Point { x, y };
-            match tile {
-                'S' => {
-                    start = point.to_owned();
-                }
-                'E' => {
-                    end = point.to_owned();
-                }
-                _ => {}
-            }
-            map.insert(point, tile);
+            map.insert(
+                point,
+                match tile {
+                    'S' => {
+                        start = point.to_owned();
+                        0
+                    }
+                    'E' => {
+                        end = point.to_owned();
+                        z - a + 2
+                    }
+                    _ => (tile as u32) - a + 1,
+                },
+            );
         }
     }
     Grid { start, end, map }
@@ -62,14 +68,14 @@ mod tests {
         assert_eq!(
             parse_input(&EXAMPLE_DATA),
             Grid {
-                start: Point { x: 0, y: 1 },
-                end: Point { x: 1, y: 1 },
+                start: Point { x: 0, y: 0 },
+                end: Point { x: 1, y: 0 },
                 map: HashMap::from_iter(
                     vec![
-                        (Point { x: 0, y: 1 }, 'S'),
-                        (Point { x: 1, y: 1 }, 'E'),
-                        (Point { x: 0, y: 0 }, 'a'),
-                        (Point { x: 1, y: 0 }, 'b'),
+                        (Point { x: 0, y: 0 }, 0),
+                        (Point { x: 0, y: 1 }, 1),
+                        (Point { x: 1, y: 1 }, 2),
+                        (Point { x: 1, y: 0 }, 27),
                     ]
                     .into_iter()
                 )
