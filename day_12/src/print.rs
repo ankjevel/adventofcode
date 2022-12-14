@@ -35,22 +35,23 @@ fn grid_as_tree_map(
         for x in 0..=(max_x + 1) {
             let point = Point { x, y };
             let key = grid.get(&point).unwrap_or(&(' ' as u32)).to_owned() + 'a' as u32 - 1;
+
             let key = if key < 'a' as u32 {
-                'S' as u32
-            } else if key > 'z' as u32 {
-                'E' as u32
+                "S".to_string()
+            } else if key == 123 {
+                "E".to_string()
             } else {
-                key
+                char::from_u32(key).unwrap_or(' ').to_string()
             };
 
-            let key = char::from_u32(key).unwrap_or(' ').to_string();
-            let key = if path.contains(&point) || key == "S" {
+            let key = if path.contains(&point) {
                 format!("\x1b[93m{}\x1b[0m", key)
             } else if key == "E" {
                 " ".to_string()
             } else {
                 key
             };
+
             tree_map.insert(point, key);
         }
     }

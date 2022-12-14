@@ -31,15 +31,12 @@ pub fn adjacent(map: &Map, point: &Point) -> Vec<Point> {
     tiles
 }
 
-pub fn find_path(map: &Map, start: Point, goal: Point) -> Vec<Point> {
-    let can_move = |point: &Point, came_from: &Point| {
-        let last_tile = map.get(came_from).unwrap();
-        match map.get(&point) {
-            Some(tile) => *tile as i64 - *last_tile as i64 <= 1,
-            None => false,
-        }
-    };
-
+pub fn bfs(
+    map: &Map,
+    start: Point,
+    goal: Point,
+    can_move: impl Fn(&Point, &Point) -> bool,
+) -> Vec<Point> {
     let mut frontier = VecDeque::new();
     let mut visited = HashMap::new();
 
@@ -52,7 +49,10 @@ pub fn find_path(map: &Map, start: Point, goal: Point) -> Vec<Point> {
         }
 
         for edge in adjacent(map, &point) {
-            if visited.contains_key(&edge) || !can_move(&edge, &point) {
+            if !can_move(&edge, &point) {
+                continue;
+            }
+            if visited.contains_key(&edge) {
                 continue;
             }
             frontier.push_back(edge);

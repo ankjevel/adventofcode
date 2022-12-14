@@ -10,11 +10,20 @@ pub mod print;
 
 pub type Map = HashMap<Point, u32>;
 
-#[derive(Eq, PartialEq, Debug)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Grid {
     start: Point,
     end: Point,
     map: Map,
+}
+
+impl Grid {
+    pub fn can_move(map: &Map, point: &Point, came_from: &Point) -> bool {
+        match map.get(&point) {
+            Some(tile) => *tile as i64 - *(map.get(came_from).unwrap()) as i64 <= 1,
+            None => false,
+        }
+    }
 }
 
 pub type Input = Grid;
