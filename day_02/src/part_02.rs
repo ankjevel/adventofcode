@@ -5,15 +5,8 @@ use crate::{Bag, Input};
 pub fn main(input: &Input) -> Result<u32> {
     Ok(input
         .iter()
-        .map(|games| {
-            games.iter().fold(Bag::new(), |mut bag, game| {
-                bag.red = bag.red.max(game.red);
-                bag.green = bag.green.max(game.green);
-                bag.blue = bag.blue.max(game.blue);
-                bag
-            })
-        })
-        .map(|bag| bag.red * bag.green * bag.blue)
+        .map(|games| games.iter().fold(Bag::new(), |bag, game| bag.max(game)))
+        .map(|bag| bag.power())
         .sum())
 }
 

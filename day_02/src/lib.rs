@@ -16,6 +16,17 @@ impl Bag {
     pub fn init(red: u32, green: u32, blue: u32) -> Self {
         Self { red, green, blue }
     }
+
+    pub fn power(self) -> u32 {
+        self.red * self.green * self.blue
+    }
+
+    pub fn max(mut self, other: &Bag) -> Bag {
+        self.red = self.red.max(other.red);
+        self.green = self.green.max(other.green);
+        self.blue = self.blue.max(other.blue);
+        self
+    }
 }
 
 pub type Input = Vec<Vec<Bag>>;
