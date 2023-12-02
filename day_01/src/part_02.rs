@@ -14,7 +14,7 @@ pub fn main(input: &Input) -> Result<u32> {
                     if c.is_digit(10) {
                         return Some(c.to_digit(10).unwrap());
                     }
-                    let chars = row.chars().skip(i).take(5).collect::<String>();
+                    let chars = row.chars().skip(i).collect::<String>();
                     if chars.starts_with("one") {
                         return Some(1);
                     } else if chars.starts_with("two") {

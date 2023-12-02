@@ -3,7 +3,7 @@
 ## Progress:
 
 - [Day 1](https://github.com/ankjevel/adventofcode/tree/2023/day_01) ⭐️ ⭐️
-- [Day 2](#)
+- [Day 2](https://github.com/ankjevel/adventofcode/tree/2023/day_02) ⭐️ ⭐️
 - [Day 3](#)
 - [Day 4](#)
 - [Day 5](#)
