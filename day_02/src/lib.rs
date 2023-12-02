@@ -27,23 +27,23 @@ pub fn parse_input(input: &str) -> Input {
         .lines()
         .map(str::trim)
         .map(|string| {
-            string.split(": ").collect::<Vec<&str>>()[1]
+            string.split(": ").collect::<Vec<_>>()[1]
                 .split("; ")
-                .collect::<Vec<&str>>()
+                .collect::<Vec<_>>()
                 .iter()
                 .map(|record| {
-                    let games = record.split(", ").collect::<Vec<&str>>();
+                    let game = record.split(", ").collect::<Vec<_>>();
                     let mut bag = Bag::new();
 
-                    games.iter().for_each(|list| {
-                        let cubes = list.split(' ').next().unwrap().parse::<u32>().unwrap();
-                        if list.ends_with("red") {
+                    game.iter().for_each(|part| {
+                        let cubes = part.split(' ').next().unwrap().parse::<u32>().unwrap();
+                        if part.ends_with("red") {
                             bag.red = cubes;
                         }
-                        if list.ends_with("green") {
+                        if part.ends_with("green") {
                             bag.green = cubes;
                         }
-                        if list.ends_with("blue") {
+                        if part.ends_with("blue") {
                             bag.blue = cubes;
                         }
                     });

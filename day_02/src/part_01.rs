@@ -4,15 +4,12 @@ use crate::Input;
 
 pub fn main(input: &Input) -> Result<u32> {
     Ok(input
-        .into_iter()
+        .iter()
         .enumerate()
         .filter(|(_, games)| {
-            let possible_games = games
-                .into_iter()
-                .filter(|game| game.red <= 12 && game.green <= 13 && game.blue <= 14)
-                .collect::<Vec<_>>()
-                .len();
-            possible_games == games.len()
+            !games
+                .iter()
+                .any(|game| game.red > 12 || game.green > 13 || game.blue > 14)
         })
         .map(|(index, _)| u32::try_from(index + 1).unwrap())
         .sum())

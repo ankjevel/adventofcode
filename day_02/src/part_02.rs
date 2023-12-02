@@ -4,18 +4,12 @@ use crate::{Bag, Input};
 
 pub fn main(input: &Input) -> Result<u32> {
     Ok(input
-        .into_iter()
+        .iter()
         .map(|games| {
-            games.into_iter().fold(Bag::new(), |mut bag, game| {
-                if game.red > bag.red {
-                    bag.red = game.red;
-                }
-                if game.green > bag.green {
-                    bag.green = game.green;
-                }
-                if game.blue > bag.blue {
-                    bag.blue = game.blue;
-                }
+            games.iter().fold(Bag::new(), |mut bag, game| {
+                bag.red = bag.red.max(game.red);
+                bag.green = bag.green.max(game.green);
+                bag.blue = bag.blue.max(game.blue);
                 bag
             })
         })
