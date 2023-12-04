@@ -5,7 +5,7 @@
 - [Day 1](https://github.com/ankjevel/adventofcode/tree/2023/day_01) ⭐️ ⭐️
 - [Day 2](https://github.com/ankjevel/adventofcode/tree/2023/day_02) ⭐️ ⭐️
 - [Day 3](https://github.com/ankjevel/adventofcode/tree/2023/day_03) ⭐️ ⭐️
-- [Day 4](#)
+- [Day 4](https://github.com/ankjevel/adventofcode/tree/2023/day_04) ⭐️
 - [Day 5](#)
 - [Day 6](#)
 - [Day 7](#)
