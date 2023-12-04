@@ -24,9 +24,6 @@ mod tests {
 
     #[test]
     fn it_parses_example() {
-        assert_eq!(
-            parse_input(&EXAMPLE_DATA),
-            vec!["1abc2".to_owned(), "pqr3stu8vwx".to_owned()]
-        );
+        assert_eq!(parse_input(&EXAMPLE_DATA), vec!["1abc2", "pqr3stu8vwx"]);
     }
 }
