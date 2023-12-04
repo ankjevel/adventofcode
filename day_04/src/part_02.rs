@@ -3,30 +3,21 @@ use std::{collections::BTreeMap, io::Result};
 use crate::Input;
 
 pub fn main(input: &Input) -> Result<u128> {
-    let mut cards = BTreeMap::from_iter(input.iter().enumerate().map(|n| (n.0 + 1, 1u128)));
+    let mut cards = BTreeMap::from_iter(input.iter().enumerate().map(|n| (n.0, 1)));
 
     input
         .iter()
         .enumerate()
         .for_each(|(index, (winning_numbers, numbers))| {
-            let mut i = index + 1;
-            let mut next = || -> usize {
-                i = i + 1;
-                i
-            };
-
-            for card in winning_numbers
+            let to_add = cards.get(&(index)).unwrap_or(&1).to_owned();
+            for (card, _) in winning_numbers
                 .iter()
                 .filter(|n| numbers.contains(n))
-                .map(|_| next())
+                .enumerate()
             {
-                let current_for_card = cards.get(&(index + 1)).unwrap_or(&0).to_owned();
-                let to_add = if current_for_card > 1 {
-                    current_for_card
-                } else {
-                    1
-                };
-                cards.entry(card).and_modify(|previous| *previous += to_add);
+                cards
+                    .entry(card + index + 1)
+                    .and_modify(|previous| *previous += to_add);
             }
         });
 
