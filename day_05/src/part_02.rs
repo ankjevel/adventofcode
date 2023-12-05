@@ -1,10 +1,8 @@
-use std::{io::Result, sync::mpsc, thread};
+use std::{io::Result, thread};
 
 use crate::{Input, Integer};
 
 pub fn main(input: &Input) -> Result<Integer> {
-    let (tx, rx) = mpsc::channel::<_>();
-
     let input = input.clone();
     let seeds = input.seeds.to_owned();
 
@@ -17,50 +15,25 @@ pub fn main(input: &Input) -> Result<Integer> {
             chunks
         });
 
-        let ranged_chunks = to_check.chunks(100);
-        let ranged_chunks_max = ranged_chunks.len();
-        let mut i = 0;
+        let ranged_chunks = to_check.chunks(100_000);
+        let mut threads = vec![];
 
         for chunks in ranged_chunks {
             let chunks = chunks.to_owned();
             let input = input.to_owned();
-            let handle = s.spawn(move || -> _ {
+            threads.push(s.spawn(move || -> _ {
                 let mut min = Integer::MAX;
                 let value = chunks.clone();
                 let input = input.to_owned();
                 for seed in value {
-                    let location = Input::get_location(&input, seed);
-                    if location < min {
-                        min = location;
-                    }
+                    min = min.min(Input::get_location(&input, seed));
                 }
                 min
-            });
-
-            let result = handle.join().unwrap();
-            let _ = tx.send(result);
-
-            i = i + 1;
-            if i == ranged_chunks_max {
-                let _ = tx.send(0); // I needed to break on something...
-            }
+            }));
         }
 
-        let handle = s.spawn(move || -> _ {
-            let mut min = Integer::MAX;
-            while let Ok(min_from_message) = rx.recv() {
-                if min_from_message == 0 {
-                    break;
-                }
-
-                if min_from_message < min {
-                    min = min_from_message;
-                }
-            }
-            min
-        });
-
-        handle.join().unwrap()
+        let threads = threads.into_iter().map(|t| t.join().unwrap());
+        threads.min().unwrap()
     }))
 }
 
