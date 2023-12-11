@@ -1,60 +1,16 @@
-use std::{cell::RefCell, io::Result};
+use std::io::Result;
 
-use crate::{Direction::*, Input};
+use crate::{math::lcm, Input, Integer};
 
-pub fn main(input: &Input) -> Result<u64> {
-    let nodes = input.nodes.to_owned();
-    let all_indices = input
+pub fn main(input: &Input) -> Result<Integer> {
+    Ok(input
         .indices
         .keys()
         .into_iter()
         .filter(|k| k.ends_with('A'))
         .map(|k| *input.indices.get(k).unwrap())
-        .collect::<Vec<_>>();
-
-    let ends_to_find = all_indices.len();
-
-    let all_currents = RefCell::new(
-        all_indices
-            .clone()
-            .into_iter()
-            .map(|i| nodes.borrow().get(i).unwrap().to_owned())
-            .collect::<Vec<_>>(),
-    );
-
-    let mut steps = 0;
-    'main: loop {
-        for direction in input.moves.clone() {
-            steps += 1;
-
-            let found_ends =
-                all_currents
-                    .borrow_mut()
-                    .iter_mut()
-                    .fold(0, |mut completed, current| {
-                        let next_index = match direction {
-                            Left => &*current.1 .0,
-                            Right => &*current.1 .1,
-                        };
-                        let next_index = *input.indices.get(next_index).unwrap();
-                        let next = nodes.borrow().get(next_index).unwrap().to_owned();
-
-                        *current = next;
-
-                        if current.0.ends_with('Z') {
-                            completed += 1;
-                        }
-
-                        completed
-                    });
-
-            if found_ends == ends_to_find {
-                break 'main;
-            }
-        }
-    }
-
-    Ok(steps)
+        .map(|start_index| Input::solve(input, start_index))
+        .fold(1, |acc, n| lcm(acc, n)))
 }
 
 #[cfg(test)]

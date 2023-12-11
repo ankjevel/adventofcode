@@ -1,34 +1,9 @@
 use std::io::Result;
 
-use crate::{Direction::*, Input};
+use crate::{Input, Integer};
 
-pub fn main(input: &Input) -> Result<u16> {
-    let nodes = input.nodes.to_owned();
-    let index_of_aaa = *input.indices.get("AAA").unwrap();
-    let mut current = nodes.borrow().get(index_of_aaa).unwrap().to_owned();
-
-    let mut steps = 0;
-    'main: loop {
-        for direction in input.moves.clone() {
-            steps += 1;
-
-            let next_index = match direction {
-                Left => &*current.1 .0,
-                Right => &*current.1 .1,
-            };
-
-            let next_index = *input.indices.get(next_index).unwrap();
-            let next = nodes.borrow().get(next_index).unwrap().to_owned();
-
-            if next.0 == "ZZZ" {
-                break 'main;
-            }
-
-            current = next;
-        }
-    }
-
-    Ok(steps)
+pub fn main(input: &Input) -> Result<Integer> {
+    Ok(Input::solve(input, *input.indices.get("AAA").unwrap()))
 }
 
 #[cfg(test)]

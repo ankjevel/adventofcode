@@ -1,5 +1,6 @@
-use std::{cell::RefCell, collections::HashMap};
+use std::collections::HashMap;
 
+pub mod math;
 pub mod part_01;
 pub mod part_02;
 
@@ -9,11 +10,43 @@ pub enum Direction {
     Right,
 }
 
+pub type Integer = u64;
+
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Input {
     moves: Vec<Direction>,
-    nodes: RefCell<Vec<(String, (String, String))>>,
+    nodes: Vec<(String, (String, String))>,
     indices: HashMap<String, usize>,
+}
+
+impl Input {
+    pub fn solve(input: &Input, start_index: usize) -> Integer {
+        let nodes = input.nodes.to_owned();
+        let mut current = nodes.get(start_index).unwrap().to_owned();
+
+        let mut steps = 0;
+        'main: loop {
+            for direction in input.moves.clone() {
+                steps += 1;
+
+                let next_index = match direction {
+                    Direction::Left => &*current.1 .0,
+                    Direction::Right => &*current.1 .1,
+                };
+
+                let next_index = *input.indices.get(next_index).unwrap();
+                let next = nodes.get(next_index).unwrap().to_owned();
+
+                if next.0.ends_with('Z') {
+                    break 'main;
+                }
+
+                current = next;
+            }
+        }
+
+        steps
+    }
 }
 
 pub fn parse_input(input: &str) -> Input {
@@ -64,7 +97,7 @@ pub fn parse_input(input: &str) -> Input {
 
     Input {
         moves,
-        nodes: RefCell::new(nodes),
+        nodes,
         indices,
     }
 }
@@ -89,11 +122,11 @@ mod tests {
             parse_input(&EXAMPLE_DATA),
             Input {
                 moves: vec![Left, Left, Right],
-                nodes: RefCell::new(vec![
+                nodes: vec![
                     ("AAA".to_owned(), ("BBB".to_owned(), "BBB".to_owned())),
                     ("BBB".to_owned(), ("AAA".to_owned(), "ZZZ".to_owned())),
                     ("ZZZ".to_owned(), ("ZZZ".to_owned(), "ZZZ".to_owned())),
-                ]),
+                ],
                 indices: HashMap::from([
                     ("AAA".to_owned(), 0),
                     ("BBB".to_owned(), 1),
