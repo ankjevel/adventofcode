@@ -1,0 +1,13 @@
+[package]
+name = "day_01"
+version = "0.1.0"
+edition = "2024"
+authors = ["Dennis Pettersson <dennis.pettersson@gmail.com>"]
+
+[lib]
+doctest = false
+
+[[bin]]
+name = "day_01"
+
+[dependencies]
