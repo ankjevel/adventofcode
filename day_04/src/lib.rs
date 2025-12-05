@@ -3,8 +3,16 @@ pub mod part_02;
 
 pub type Input = Vec<Vec<Position>>;
 
+#[derive(Clone, Copy, Eq, PartialEq, Hash, Debug)]
+pub enum Position {
+    Empty,
+    PaperRoll,
+}
+
+use Position::{Empty, PaperRoll};
+
 pub fn can_move(input: &Input, row: usize, column: usize) -> bool {
-    let movements: Vec<(isize, isize)> = vec![
+    let movements = vec![
         (-1, -1),
         (-1, 0),
         (-1, 1),
@@ -14,7 +22,6 @@ pub fn can_move(input: &Input, row: usize, column: usize) -> bool {
         (1, 0),
         (1, 1),
     ];
-
     let empty = vec![];
     movements
         .iter()
@@ -23,21 +30,13 @@ pub fn can_move(input: &Input, row: usize, column: usize) -> bool {
                 .get(((row as isize) + movement.0) as usize)
                 .unwrap_or(&empty)
                 .get(((column as isize) + movement.1) as usize)
-                .unwrap_or(&Position::Empty)
-                .eq(&Position::PaperRoll)
+                .unwrap_or(&Empty)
+                .eq(&PaperRoll)
         })
         .collect::<Vec<_>>()
         .len()
         < 4
 }
-
-#[derive(Clone, Copy, Eq, PartialEq, Hash, Debug)]
-pub enum Position {
-    Empty,
-    PaperRoll,
-}
-
-use Position::{Empty, PaperRoll};
 
 pub fn parse_input(input: &str) -> Input {
     input
