@@ -31,18 +31,7 @@ mod tests {
 
     use super::*;
 
-    const EXAMPLE_DATA: &str = "
-        L68
-        L30
-        R48
-        L5
-        R60
-        L55
-        L1
-        L99
-        R14
-        L82
-    ";
+    const EXAMPLE_DATA: &str = include_str!("../../input/day_01_example");
 
     #[test]
     fn it_gets_the_example_correct() -> Result<()> {

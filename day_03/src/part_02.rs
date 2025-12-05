@@ -34,12 +34,7 @@ mod tests {
 
     use super::*;
 
-    const EXAMPLE_DATA: &str = "
-        987654321111111
-        811111111111119
-        234234234234278
-        818181911112111
-    ";
+    const EXAMPLE_DATA: &str = include_str!("../../input/day_03_example");
 
     #[test]
     fn it_gets_the_example_correct() -> Result<()> {
